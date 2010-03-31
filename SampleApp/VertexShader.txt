@@ -1,0 +1,10 @@
+uniform mat4 inProjMatrix;
+uniform mat4 inViewMatrix;
+uniform mat4 inWorldMatrix;
+attribute vec4 inPosition;
+
+void main()
+{
+   gl_Position = inProjMatrix * inWorldMatrix * inViewMatrix * inPosition;
+}
+

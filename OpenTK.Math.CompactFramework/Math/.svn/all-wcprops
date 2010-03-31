@@ -1,0 +1,149 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svnroot/opentk/!svn/ver/2588/trunk/Source/OpenTK/Math
+END
+Vector2.cs
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svnroot/opentk/!svn/ver/2530/trunk/Source/OpenTK/Math/Vector2.cs
+END
+Quaternion.cs
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svnroot/opentk/!svn/ver/2424/trunk/Source/OpenTK/Math/Quaternion.cs
+END
+BezierCurve.cs
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/opentk/!svn/ver/2112/trunk/Source/OpenTK/Math/BezierCurve.cs
+END
+Vector3.cs
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svnroot/opentk/!svn/ver/2530/trunk/Source/OpenTK/Math/Vector3.cs
+END
+Vector4.cs
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svnroot/opentk/!svn/ver/2530/trunk/Source/OpenTK/Math/Vector4.cs
+END
+Matrix4.cs
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svnroot/opentk/!svn/ver/2329/trunk/Source/OpenTK/Math/Matrix4.cs
+END
+Vector2d.cs
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/opentk/!svn/ver/2588/trunk/Source/OpenTK/Math/Vector2d.cs
+END
+Quaterniond.cs
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/opentk/!svn/ver/2485/trunk/Source/OpenTK/Math/Quaterniond.cs
+END
+Point.cs
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/opentk/!svn/ver/2477/trunk/Source/OpenTK/Math/Point.cs
+END
+MathHelper.cs
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svnroot/opentk/!svn/ver/2224/trunk/Source/OpenTK/Math/MathHelper.cs
+END
+Vector3d.cs
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/opentk/!svn/ver/2588/trunk/Source/OpenTK/Math/Vector3d.cs
+END
+Vector4d.cs
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/opentk/!svn/ver/2588/trunk/Source/OpenTK/Math/Vector4d.cs
+END
+Matrix3d.cs
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/opentk/!svn/ver/2485/trunk/Source/OpenTK/Math/Matrix3d.cs
+END
+BezierCurveCubic.cs
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/opentk/!svn/ver/1976/trunk/Source/OpenTK/Math/BezierCurveCubic.cs
+END
+Matrix4d.cs
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/opentk/!svn/ver/2415/trunk/Source/OpenTK/Math/Matrix4d.cs
+END
+Vector2h.cs
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/opentk/!svn/ver/2485/trunk/Source/OpenTK/Math/Vector2h.cs
+END
+Vector3h.cs
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/opentk/!svn/ver/2485/trunk/Source/OpenTK/Math/Vector3h.cs
+END
+BezierCurveQuadric.cs
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/opentk/!svn/ver/1976/trunk/Source/OpenTK/Math/BezierCurveQuadric.cs
+END
+Vector4h.cs
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/opentk/!svn/ver/2485/trunk/Source/OpenTK/Math/Vector4h.cs
+END
+Rectangle.cs
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svnroot/opentk/!svn/ver/2477/trunk/Source/OpenTK/Math/Rectangle.cs
+END
+Functions.cs
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svnroot/opentk/!svn/ver/2228/trunk/Source/OpenTK/Math/Functions.cs
+END
+Size.cs
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/opentk/!svn/ver/2477/trunk/Source/OpenTK/Math/Size.cs
+END
+Half.cs
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/opentk/!svn/ver/2485/trunk/Source/OpenTK/Math/Half.cs
+END
+Box2.cs
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/opentk/!svn/ver/2224/trunk/Source/OpenTK/Math/Box2.cs
+END
