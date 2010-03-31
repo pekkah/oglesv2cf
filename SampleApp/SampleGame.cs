@@ -201,7 +201,7 @@
 
         protected override void OnUpdate(double deltaTime)
         {
-            rotationAngle += (float)deltaTime * 0.03f;
+            rotationAngle += (float)deltaTime * 0.0001f;
 
             if (rotationAngle >= 360)
             {

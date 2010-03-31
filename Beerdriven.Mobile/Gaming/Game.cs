@@ -51,6 +51,10 @@ namespace Beerdriven.Mobile.Gaming
 
         private long counterFrequency;
 
+        private double requestedFrameRate = 1d / 60d;
+
+        private double currentFrameRate = 0;
+
         private long frameDeltaCount;
 
         private double frameDeltaSeconds;
@@ -175,7 +179,11 @@ namespace Beerdriven.Mobile.Gaming
         {
             NativeCore.QueryPerformanceFrequency(ref this.counterFrequency);
 
-            this.frameStartCount = this.frameEndCount = 0;
+            NativeCore.QueryPerformanceCounter(ref this.frameStartCount);
+
+            this.frameEndCount = this.frameStartCount;
+
+            this.currentFrameRate = this.requestedFrameRate;
 
             while (!this.RunGameLoop())
             {
@@ -191,25 +199,27 @@ namespace Beerdriven.Mobile.Gaming
         {
             while (!NativeCore.PeekMessage(out this.message, IntPtr.Zero, 0, 0, 0))
             {
-                this.frameDeltaCount = this.frameEndCount - this.frameStartCount;
+                NativeCore.QueryPerformanceCounter(ref this.frameEndCount);
 
-                NativeCore.QueryPerformanceCounter(ref this.frameStartCount);
+                this.frameDeltaCount = this.frameEndCount - this.frameStartCount;
                 this.frameDeltaSeconds = this.frameDeltaCount / (double)this.counterFrequency;
 
-                this.Tick(this.frameDeltaSeconds);
+                this.Update(this.frameDeltaSeconds);
 
-                NativeCore.QueryPerformanceCounter(ref this.frameEndCount);
+                // Simple framerate controller. Updates are done constantly but rendering only at requested fps.
+                if (frameDeltaSeconds < requestedFrameRate)
+                {   
+                    continue;
+                }
+
+                this.Render(this.frameDeltaSeconds);
+    
+                NativeCore.QueryPerformanceCounter(ref this.frameStartCount);
             }
 
             this.OnHandleMessage(this.message);
 
             return this.ExitGame;
-        }
-
-        private void Tick(double deltaTime)
-        {
-            this.Update(deltaTime);
-            this.Render(deltaTime);
         }
 
         private void Update(double deltaTime)
