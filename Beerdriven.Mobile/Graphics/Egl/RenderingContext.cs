@@ -34,23 +34,17 @@ namespace Beerdriven.Mobile.Graphics.Egl
 
     public class RenderingContext : Disposable
     {
-        private readonly IntPtr displayPointer;
+        private readonly AttribList attribList;
 
         private readonly IntPtr configPointer;
 
-        private readonly AttribList attribList;
+        private readonly IntPtr displayPointer;
 
         private Surface drawSurface;
 
-        private Surface readSurface;
-
-        internal IntPtr ContextPointer
-        {
-            get;
-            private set;
-        }
-
         private bool isInitialized;
+
+        private Surface readSurface;
 
         internal RenderingContext(IntPtr displayPointer, IntPtr configPointer, AttribList attribList)
         {
@@ -58,6 +52,12 @@ namespace Beerdriven.Mobile.Graphics.Egl
             this.configPointer = configPointer;
             this.attribList = attribList;
             this.Initialize();
+        }
+
+        internal IntPtr ContextPointer
+        {
+            get;
+            private set;
         }
 
         public void MakeCurrent(Surface draw, Surface read)
@@ -86,17 +86,20 @@ namespace Beerdriven.Mobile.Graphics.Egl
             NativeEgl.eglSwapBuffers(this.displayPointer, this.drawSurface.SurfacePointer);
         }
 
-        protected void MakeCurrent(IntPtr draw, IntPtr read)
+        protected override void Dispose(bool disposing)
         {
-            if (NativeEgl.eglMakeCurrent(this.displayPointer, draw, read, this.ContextPointer) == NativeEgl.EGL_FALSE)
+            if (this.isInitialized)
             {
-                throw new DeviceOperationException("Could not set rendering context to current.", NativeEgl.eglGetError());
+                NativeEgl.eglDestroyContext(this.displayPointer, this.ContextPointer);
             }
+
+            base.Dispose(disposing);
         }
 
         protected void Initialize()
         {
-            this.ContextPointer = NativeEgl.eglCreateContext(this.displayPointer, this.configPointer, IntPtr.Zero, this.attribList.ToIntArray());
+            this.ContextPointer = NativeEgl.eglCreateContext(
+                    this.displayPointer, this.configPointer, IntPtr.Zero, this.attribList.ToIntArray());
 
             if (this.ContextPointer == IntPtr.Zero)
             {
@@ -106,14 +109,13 @@ namespace Beerdriven.Mobile.Graphics.Egl
             this.isInitialized = true;
         }
 
-        protected override void Dispose(bool disposing)
+        protected void MakeCurrent(IntPtr draw, IntPtr read)
         {
-            if (this.isInitialized)
+            if (NativeEgl.eglMakeCurrent(this.displayPointer, draw, read, this.ContextPointer) == NativeEgl.EGL_FALSE)
             {
-                NativeEgl.eglDestroyContext(this.displayPointer, this.ContextPointer);
+                throw new DeviceOperationException(
+                        "Could not set rendering context to current.", NativeEgl.eglGetError());
             }
-
-            base.Dispose(disposing);
         }
     }
 }

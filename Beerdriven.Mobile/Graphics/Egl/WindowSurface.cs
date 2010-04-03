@@ -29,22 +29,15 @@
 namespace Beerdriven.Mobile.Graphics.Egl
 {
     using System;
-    using System.Windows.Forms;
     using Interop;
 
     public class WindowSurface : Surface
     {
-        private readonly IntPtr displayPointer;
-
         private readonly IntPtr configPointer;
 
-        private bool isInitialized;
+        private readonly IntPtr displayPointer;
 
-        internal IntPtr WindowHandle
-        {
-            get;
-            set;
-        }
+        private bool isInitialized;
 
         internal WindowSurface(IntPtr windowHandle, IntPtr displayPointer, IntPtr configPointer)
         {
@@ -54,19 +47,10 @@ namespace Beerdriven.Mobile.Graphics.Egl
             this.Initialize();
         }
 
-        protected void Initialize()
+        internal IntPtr WindowHandle
         {
-            this.SurfacePointer = NativeEgl.eglCreateWindowSurface(this.displayPointer, this.configPointer, this.WindowHandle, null);
-
-            if (this.SurfacePointer == IntPtr.Zero)
-            {
-                var errorCode = NativeEgl.eglGetError();
-
-                var errorMessage = string.Format("Could not create window surface. Error code {0}", errorCode.ToString("X"));
-                throw new DeviceOperationException(errorMessage, errorCode);
-            }
-
-            this.isInitialized = true;
+            get;
+            set;
         }
 
         protected override void Dispose(bool disposing)
@@ -81,6 +65,23 @@ namespace Beerdriven.Mobile.Graphics.Egl
             }
 
             base.Dispose(disposing);
+        }
+
+        protected void Initialize()
+        {
+            this.SurfacePointer = NativeEgl.eglCreateWindowSurface(
+                    this.displayPointer, this.configPointer, this.WindowHandle, null);
+
+            if (this.SurfacePointer == IntPtr.Zero)
+            {
+                var errorCode = NativeEgl.eglGetError();
+
+                var errorMessage = string.Format(
+                        "Could not create window surface. Error code {0}", errorCode.ToString("X"));
+                throw new DeviceOperationException(errorMessage, errorCode);
+            }
+
+            this.isInitialized = true;
         }
     }
 }

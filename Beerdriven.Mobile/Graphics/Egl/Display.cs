@@ -52,17 +52,6 @@ namespace Beerdriven.Mobile.Graphics.Egl
             set;
         }
 
-        protected void Initialize()
-        {
-            // get display
-            this.DisplayPointer = NativeEgl.eglGetDisplay(this.DeviceContext);
-
-            if (this.DisplayPointer == IntPtr.Zero)
-            {
-                throw new DeviceOperationException("Could not get display", NativeEgl.eglGetError());
-            }
-        }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -74,6 +63,17 @@ namespace Beerdriven.Mobile.Graphics.Egl
             this.DisplayPointer = IntPtr.Zero;
 
             base.Dispose(disposing);
+        }
+
+        protected void Initialize()
+        {
+            // get display
+            this.DisplayPointer = NativeEgl.eglGetDisplay(this.DeviceContext);
+
+            if (this.DisplayPointer == IntPtr.Zero)
+            {
+                throw new DeviceOperationException("Could not get display", NativeEgl.eglGetError());
+            }
         }
     }
 }

@@ -50,7 +50,6 @@ namespace Beerdriven.Mobile.Graphics.Egl
         {
             this.Attributes.Add(NativeEgl.EGL_NONE);
         }
-
     }
 
     public static class AttribListExtensions
