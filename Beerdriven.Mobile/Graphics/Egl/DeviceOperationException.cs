@@ -28,32 +28,49 @@
 
 namespace Beerdriven.Mobile.Graphics.Egl
 {
-    using System.Collections.Generic;
-    using Interop;
+    using System;
+    using System.Text;
 
-    public class eglAttribList
+    public class DeviceOperationException : Exception
     {
-        public List<int> attributes;
-
-        public eglAttribList()
+        public DeviceOperationException(string message, int errorCode) : base(message)
         {
-            this.attributes = new List<int>();
+            this.ErrorCode = errorCode;
+            this.UpdateErrorId();
         }
 
-        public void Add(int attrib, int value)
+        public DeviceOperationException(string formatMessage, int errorCode, params object[] args)
+                : base(string.Format(formatMessage, args))
         {
-            this.attributes.Add(attrib);
-            this.attributes.Add(value);
+            this.ErrorCode = errorCode;
+            this.UpdateErrorId();
         }
 
-        public void AddEnd()
+        public int ErrorCode
         {
-            this.attributes.Add(NativeEgl.EGL_NONE);
+            get;
+            private set;
         }
 
-        public int[] ToIntArray()
+        public string ErrorId
         {
-            return this.attributes.ToArray();
+            get;
+            private set;
+        }
+
+        public override string ToString()
+        {
+            var errorBuilder = new StringBuilder();
+            errorBuilder.AppendFormat("EGL ERROR CODE : '{0}'\n", this.ErrorCode.ToString("X"));
+            errorBuilder.AppendFormat("EGL ERROR CODE ID : '{0}'\n", this.ErrorId);
+            errorBuilder.AppendLine(this.Message);
+
+            return errorBuilder.ToString();
+        }
+
+        private void UpdateErrorId()
+        {
+            this.ErrorId = "NOT IMPLEMENTED"; // eglError.GetId(this.ErrorCode);
         }
     }
 }

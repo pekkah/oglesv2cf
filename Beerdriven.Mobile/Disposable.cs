@@ -32,6 +32,12 @@ namespace Beerdriven.Mobile.Graphics.OpenGLESv2
 
     public abstract class Disposable : IDisposable
     {
+        protected virtual bool IsDisposed
+        {
+            get;
+            private set;
+        }
+
         ~Disposable()
         {
             this.Dispose(false);
@@ -45,6 +51,11 @@ namespace Beerdriven.Mobile.Graphics.OpenGLESv2
 
         protected virtual void Dispose(bool disposing)
         {
+            if (IsDisposed)
+            {
+                return;
+            }
+
             if (disposing)
             {
                 // TODO: free managed resources
@@ -54,6 +65,8 @@ namespace Beerdriven.Mobile.Graphics.OpenGLESv2
             // TODO : free unmanaged resources
             // TODO : hwnd.Dispose()
             // TODO : set large field to null
+
+            this.IsDisposed = true;
         }
     }
 }

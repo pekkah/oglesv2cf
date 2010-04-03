@@ -32,6 +32,7 @@ namespace Beerdriven.Mobile.Gaming
     using System.Diagnostics;
     using System.Linq;
     using System.Windows.Forms;
+    using Graphics;
     using Graphics.Egl;
     using Graphics.Egl.Interop;
     using Graphics.ES20.Interop;
@@ -65,13 +66,19 @@ namespace Beerdriven.Mobile.Gaming
 
         private NativeMessage message;
 
-        protected esContext GraphicsContext
+        protected IDisplayManager displayManager;
+
+        protected Surface renderingSurface;
+
+        protected RenderingContext renderingContext;
+
+        protected IDeviceResourceManager DeviceManager
         {
             get;
             private set;
         }
 
-        protected Form RenderingWindow
+        protected RenderingWindow RenderingWindow
         {
             get;
             private set;
@@ -84,7 +91,7 @@ namespace Beerdriven.Mobile.Gaming
             this.RunApplication();
         }
 
-        protected abstract void OnConfigureAttributes(eglAttribList attribs);
+        protected abstract void OnConfigureAttributes(AttribList attribs);
 
         protected abstract void OnLoadContent();
 
@@ -100,7 +107,9 @@ namespace Beerdriven.Mobile.Gaming
         {
             if (disposing)
             {
-                this.GraphicsContext.Dispose();
+                renderingContext.Dispose();
+                renderingSurface.Destroy();
+                this.DeviceManager.Terminate();
             }
 
             base.Dispose(disposing);
@@ -110,25 +119,39 @@ namespace Beerdriven.Mobile.Gaming
         {
             try
             {
-                this.GraphicsContext = new esContext(NativeEgl.EGL_OPENGL_ES_API);
-                this.GraphicsContext.Initialize();
+                this.RenderingWindow = new RenderingWindow();
+                this.RenderingWindow.Show();
 
-                var attribs = new eglAttribList();
+                this.displayManager = new DisplayManager();
+
+                this.DeviceManager = new DeviceResourceManager(this.displayManager.GetDisplay(this.RenderingWindow));
+
+                this.DeviceManager.BindApi(NativeEgl.EGL_OPENGL_ES_API);
+
+                var attribs = new AttribList();
 
                 this.OnConfigureAttributes(attribs);
 
-                var config = this.GraphicsContext.GetConfigs(attribs).FirstOrDefault();
+                var config = this.DeviceManager.ChooseConfigs(attribs, 1).FirstOrDefault();
 
                 if (config == null)
                 {
                     throw new InvalidOperationException("Could not find matching configuration");
                 }
 
-                this.GraphicsContext.OpenRenderingWindow(config);
+                var contextAttribs = new AttribList();
+                contextAttribs.Add(NativeEgl.EGL_CONTEXT_CLIENT_VERSION, 2);
+                contextAttribs.AddEnd();
+
+                this.renderingContext = this.DeviceManager.CreateContext(config, contextAttribs);
+
+                this.renderingSurface = this.DeviceManager.CreateWindowSurface(config, this.RenderingWindow);
+
+                this.renderingContext.MakeCurrent(this.renderingSurface, this.renderingSurface);
 
                 NativeGl.glClearColor(0, 0, 0, 1f);
 
-                NativeGl.glViewport(0, 0, this.GraphicsContext.Width, this.GraphicsContext.Height);
+                NativeGl.glViewport(0, 0, this.RenderingWindow.Width, this.RenderingWindow.Height);
 
                 var error = NativeGl.glGetError();
 
@@ -138,7 +161,7 @@ namespace Beerdriven.Mobile.Gaming
 
                 }
             }
-            catch (eglException x)
+            catch (DeviceOperationException x)
             {
                 MessageBox.Show(x.ToString());
                 this.ExitGame = true;
@@ -161,7 +184,7 @@ namespace Beerdriven.Mobile.Gaming
         {
             this.OnRender(deltaTime);
 
-            this.GraphicsContext.SwapBuffers();
+            this.renderingContext.SwapBuffers();
 
             var errorCode = NativeGl.glGetError();
 

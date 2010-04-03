@@ -29,67 +29,56 @@
 namespace Beerdriven.Mobile.Graphics.Egl
 {
     using System;
+    using System.Windows.Forms;
     using Interop;
-    using OpenGLESv2;
 
-    public class eglContext : Disposable
+    public class WindowSurface : Surface
     {
-        internal eglContext(IntPtr context, IntPtr display)
-        {
-            this.Context = context;
-            this.Display = display;
-        }
+        private readonly IntPtr displayPointer;
 
-        internal IntPtr Context
-        {
-            get;
-            private set;
-        }
+        private readonly IntPtr configPointer;
 
-        private IntPtr Display
+        private bool isInitialized;
+
+        internal IntPtr WindowHandle
         {
             get;
             set;
         }
 
-        public static eglContext Create(
-                eglDisplay display, eglConfig config, eglContext shareContext, eglAttribList attribList)
+        internal WindowSurface(IntPtr windowHandle, IntPtr displayPointer, IntPtr configPointer)
         {
-            int[] attribs = null;
-            IntPtr share_context = IntPtr.Zero;
-
-            if (attribList != null)
-            {
-                attribs = attribList.ToIntArray();
-            }
-
-            if (shareContext != null)
-            {
-                share_context = shareContext.Context;
-            }
-
-            var context = NativeEgl.eglCreateContext(display.Display, config.Config, share_context, attribs);
-
-            if (context == IntPtr.Zero)
-            {
-                throw new eglException("Failed to create context.", NativeEgl.eglGetError());
-            }
-
-            return new eglContext(context, display.Display);
+            this.displayPointer = displayPointer;
+            this.configPointer = configPointer;
+            this.WindowHandle = windowHandle;
+            this.Initialize();
         }
 
-        public void MakeCurrent(eglSurface draw, eglSurface read)
+        protected void Initialize()
         {
-            NativeEgl.eglMakeCurrent(this.Display, draw.Surface, read.Surface, this.Context);
+            this.SurfacePointer = NativeEgl.eglCreateWindowSurface(this.displayPointer, this.configPointer, this.WindowHandle, null);
+
+            if (this.SurfacePointer == IntPtr.Zero)
+            {
+                var errorCode = NativeEgl.eglGetError();
+
+                var errorMessage = string.Format("Could not create window surface. Error code {0}", errorCode.ToString("X"));
+                throw new DeviceOperationException(errorMessage, errorCode);
+            }
+
+            this.isInitialized = true;
         }
 
         protected override void Dispose(bool disposing)
         {
-            // release current context          
-            NativeEgl.eglMakeCurrent(this.Display, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
-
-            this.Context = IntPtr.Zero;
-            this.Display = IntPtr.Zero;
+            if (this.isInitialized)
+            {
+                if (NativeEgl.eglDestroySurface(this.displayPointer, this.SurfacePointer) == NativeEgl.EGL_FALSE)
+                {
+                    var errorCode = NativeEgl.eglGetError();
+                    throw new DeviceOperationException("Could not destroy surface.", errorCode);
+                }
+            }
 
             base.Dispose(disposing);
         }

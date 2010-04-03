@@ -30,14 +30,14 @@ namespace Beerdriven.Mobile.Graphics.Egl
 {
     using System;
 
-    public class eglConfig
+    public class Config
     {
-        internal eglConfig(IntPtr config)
+        internal Config(IntPtr config)
         {
-            this.Config = config;
+            this.ConfigPointer = config;
         }
 
-        internal IntPtr Config
+        internal IntPtr ConfigPointer
         {
             get;
             private set;

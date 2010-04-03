@@ -47,7 +47,7 @@
             base.Dispose(disposing);
         }
 
-        protected override void OnConfigureAttributes(eglAttribList attribs)
+        protected override void OnConfigureAttributes(AttribList attribs)
         {
             attribs.Add(NativeEgl.EGL_RED_SIZE, 5);
             attribs.Add(NativeEgl.EGL_GREEN_SIZE, 6);
@@ -152,7 +152,7 @@
                 this.View = Matrix4.LookAt(0, 0, 1, 0, 0, 0, 0, 1, 0);
 
                 // projection matrix
-                var fovy = this.GraphicsContext.Width / (float)this.GraphicsContext.Height;
+                var fovy = this.RenderingWindow.Width / (float)this.RenderingWindow.Height;
                 this.Projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45), fovy, 1, 100);
 
                 // world matrix

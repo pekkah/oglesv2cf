@@ -29,30 +29,23 @@
 namespace Beerdriven.Mobile.Graphics.Egl
 {
     using System;
-    using System.Windows.Forms;
-    using Interop;
+    using OpenGLESv2;
 
-    public class eglWindowSurface : eglSurface
+    public class Surface : Disposable
     {
-        private readonly IntPtr handle;
-
-        internal eglWindowSurface(IntPtr surface, IntPtr handle) : base(surface)
+        internal Surface()
         {
-            this.handle = handle;
         }
 
-        public static eglWindowSurface Create(eglDisplay display, eglConfig config, Form window)
+        internal IntPtr SurfacePointer
         {
-            var surfacePtr = NativeEgl.eglCreateWindowSurface(display.Display, config.Config, window.Handle, null);
+            get;
+            set;
+        }
 
-            if (surfacePtr == IntPtr.Zero)
-            {
-                var errorCode = NativeEgl.eglGetError();
-
-                throw new eglException("Could not initialize window surface.", errorCode);
-            }
-
-            return new eglWindowSurface(surfacePtr, window.Handle);
+        public void Destroy()
+        {
+            this.Dispose();
         }
     }
 }

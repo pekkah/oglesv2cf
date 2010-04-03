@@ -32,14 +32,12 @@ namespace Beerdriven.Mobile.Graphics.Egl
     using Interop;
     using OpenGLESv2;
 
-    public class eglDisplay : Disposable
+    public class Display : Disposable
     {
-        private bool isInitialized;
-
-
-        internal eglDisplay(IntPtr deviceContext)
+        internal Display(IntPtr deviceContext)
         {
             this.DeviceContext = deviceContext;
+            this.Initialize();
         }
 
         internal IntPtr DeviceContext
@@ -48,34 +46,21 @@ namespace Beerdriven.Mobile.Graphics.Egl
             set;
         }
 
-        internal IntPtr Display
+        internal IntPtr DisplayPointer
         {
             get;
             set;
         }
 
-        public Version Initialize()
+        protected void Initialize()
         {
             // get display
-            this.Display = NativeEgl.eglGetDisplay(this.DeviceContext);
+            this.DisplayPointer = NativeEgl.eglGetDisplay(this.DeviceContext);
 
-            if (this.Display == IntPtr.Zero)
+            if (this.DisplayPointer == IntPtr.Zero)
             {
-                throw new eglException("Could not get display", NativeEgl.eglGetError());
+                throw new DeviceOperationException("Could not get display", NativeEgl.eglGetError());
             }
-
-            // initialize display connection
-            int major, minor;
-            if (NativeEgl.eglInitialize(this.Display, out major, out minor) == NativeEgl.EGL_FALSE)
-            {
-                var errorCode = NativeEgl.eglGetError();
-
-                throw new eglException("Could not intitialize egl display connection.", errorCode);
-            }
-
-            this.isInitialized = true;
-
-            return new Version(major, minor);
         }
 
         protected override void Dispose(bool disposing)
@@ -85,16 +70,8 @@ namespace Beerdriven.Mobile.Graphics.Egl
                 // managed resources 
             }
 
-            if (this.isInitialized)
-            {
-                if (NativeEgl.eglTerminate(this.Display) == NativeEgl.EGL_FALSE)
-                {
-                    throw new eglException("Failed to terminate egl display connection", NativeEgl.eglGetError());
-                }
-            }
-
             this.DeviceContext = IntPtr.Zero;
-            this.Display = IntPtr.Zero;
+            this.DisplayPointer = IntPtr.Zero;
 
             base.Dispose(disposing);
         }

@@ -28,49 +28,41 @@
 
 namespace Beerdriven.Mobile.Graphics.Egl
 {
-    using System;
-    using System.Text;
+    using System.Collections.Generic;
+    using Interop;
 
-    public class eglException : Exception
+    public class AttribList
     {
-        public eglException(string message, int errorCode) : base(message)
+        internal readonly List<int> Attributes;
+
+        public AttribList()
         {
-            this.ErrorCode = errorCode;
-            this.UpdateErrorId();
+            this.Attributes = new List<int>();
         }
 
-        public eglException(string formatMessage, int errorCode, params object[] args)
-                : base(string.Format(formatMessage, args))
+        public void Add(int attrib, int value)
         {
-            this.ErrorCode = errorCode;
-            this.UpdateErrorId();
+            this.Attributes.Add(attrib);
+            this.Attributes.Add(value);
         }
 
-        public int ErrorCode
+        public void AddEnd()
         {
-            get;
-            private set;
+            this.Attributes.Add(NativeEgl.EGL_NONE);
         }
 
-        public string ErrorId
-        {
-            get;
-            private set;
-        }
+    }
 
-        public override string ToString()
+    public static class AttribListExtensions
+    {
+        public static int[] ToIntArray(this AttribList list)
         {
-            var errorBuilder = new StringBuilder();
-            errorBuilder.AppendFormat("EGL ERROR CODE : '{0}'\n", this.ErrorCode.ToString("X"));
-            errorBuilder.AppendFormat("EGL ERROR CODE ID : '{0}'\n", this.ErrorId);
-            errorBuilder.AppendLine(this.Message);
+            if (list == null || list.Attributes.Count == 0)
+            {
+                return null;
+            }
 
-            return errorBuilder.ToString();
-        }
-
-        private void UpdateErrorId()
-        {
-            this.ErrorId = "NOT IMPLEMENTED"; // eglError.GetId(this.ErrorCode);
+            return list.Attributes.ToArray();
         }
     }
 }
