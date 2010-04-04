@@ -53,6 +53,11 @@ namespace Beerdriven.Mobile.Graphics.Egl
             set;
         }
 
+        public void SwapBuffers()
+        {
+            NativeEgl.eglSwapBuffers(this.displayPointer, this.SurfacePointer);
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (this.isInitialized)

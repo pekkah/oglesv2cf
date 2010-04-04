@@ -32,7 +32,7 @@ namespace Beerdriven.Mobile.Graphics
     using System.Windows.Forms;
     using Egl;
 
-    public interface IDeviceResourceManager
+    public interface IPlatformGraphicsManager
     {
         void BindApi(uint api);
 

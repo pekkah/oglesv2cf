@@ -37,13 +37,13 @@ namespace Beerdriven.Mobile.Graphics.Egl
     /// <summary>
     ///   High level class implementing interface to Native Graphics Interface EGL.
     /// </summary>
-    public class DeviceResourceManager : Disposable, IDeviceResourceManager
+    public class PlatformGraphicsManager : Disposable, IPlatformGraphicsManager
     {
         private readonly Display display;
 
         private bool isInitialized;
 
-        public DeviceResourceManager(Display display)
+        public PlatformGraphicsManager(Display display)
         {
             this.display = display;
             this.Initialize();

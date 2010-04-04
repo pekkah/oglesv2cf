@@ -40,11 +40,7 @@ namespace Beerdriven.Mobile.Graphics.Egl
 
         private readonly IntPtr displayPointer;
 
-        private Surface drawSurface;
-
         private bool isInitialized;
-
-        private Surface readSurface;
 
         internal RenderingContext(IntPtr displayPointer, IntPtr configPointer, AttribList attribList)
         {
@@ -62,9 +58,6 @@ namespace Beerdriven.Mobile.Graphics.Egl
 
         public void MakeCurrent(Surface draw, Surface read)
         {
-            this.drawSurface = draw;
-            this.readSurface = read;
-
             IntPtr drawPointer = IntPtr.Zero;
             IntPtr readPointer = IntPtr.Zero;
 
@@ -79,11 +72,6 @@ namespace Beerdriven.Mobile.Graphics.Egl
             }
 
             this.MakeCurrent(drawPointer, readPointer);
-        }
-
-        public void SwapBuffers()
-        {
-            NativeEgl.eglSwapBuffers(this.displayPointer, this.drawSurface.SurfacePointer);
         }
 
         protected override void Dispose(bool disposing)

@@ -68,11 +68,11 @@ namespace Beerdriven.Mobile.Gaming
 
         protected IDisplayManager displayManager;
 
-        protected Surface renderingSurface;
+        protected WindowSurface renderingSurface;
 
         protected RenderingContext renderingContext;
 
-        protected IDeviceResourceManager DeviceManager
+        protected IPlatformGraphicsManager PlatformManager
         {
             get;
             private set;
@@ -109,7 +109,7 @@ namespace Beerdriven.Mobile.Gaming
             {
                 renderingContext.Dispose();
                 renderingSurface.Destroy();
-                this.DeviceManager.Terminate();
+                this.PlatformManager.Terminate();
             }
 
             base.Dispose(disposing);
@@ -124,15 +124,15 @@ namespace Beerdriven.Mobile.Gaming
 
                 this.displayManager = new DisplayManager();
 
-                this.DeviceManager = new DeviceResourceManager(this.displayManager.GetDisplay(this.RenderingWindow));
+                this.PlatformManager = new PlatformGraphicsManager(this.displayManager.GetDisplay(this.RenderingWindow));
 
-                this.DeviceManager.BindApi(NativeEgl.EGL_OPENGL_ES_API);
+                this.PlatformManager.BindApi(NativeEgl.EGL_OPENGL_ES_API);
 
                 var attribs = new AttribList();
 
                 this.OnConfigureAttributes(attribs);
 
-                var config = this.DeviceManager.ChooseConfigs(attribs, 1).FirstOrDefault();
+                var config = this.PlatformManager.ChooseConfigs(attribs, 1).FirstOrDefault();
 
                 if (config == null)
                 {
@@ -143,9 +143,9 @@ namespace Beerdriven.Mobile.Gaming
                 contextAttribs.Add(NativeEgl.EGL_CONTEXT_CLIENT_VERSION, 2);
                 contextAttribs.AddEnd();
 
-                this.renderingContext = this.DeviceManager.CreateContext(config, contextAttribs);
+                this.renderingContext = this.PlatformManager.CreateContext(config, contextAttribs);
 
-                this.renderingSurface = this.DeviceManager.CreateWindowSurface(config, this.RenderingWindow);
+                this.renderingSurface = this.PlatformManager.CreateWindowSurface(config, this.RenderingWindow);
 
                 this.renderingContext.MakeCurrent(this.renderingSurface, this.renderingSurface);
 
@@ -184,7 +184,7 @@ namespace Beerdriven.Mobile.Gaming
         {
             this.OnRender(deltaTime);
 
-            this.renderingContext.SwapBuffers();
+            this.renderingSurface.SwapBuffers();
 
             var errorCode = NativeGl.glGetError();
 
