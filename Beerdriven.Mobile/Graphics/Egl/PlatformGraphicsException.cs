@@ -31,15 +31,15 @@ namespace Beerdriven.Mobile.Graphics.Egl
     using System;
     using System.Text;
 
-    public class DeviceOperationException : Exception
+    public class PlatformGraphicsException : Exception
     {
-        public DeviceOperationException(string message, int errorCode) : base(message)
+        public PlatformGraphicsException(string message, int errorCode) : base(message)
         {
             this.ErrorCode = errorCode;
             this.UpdateErrorId();
         }
 
-        public DeviceOperationException(string formatMessage, int errorCode, params object[] args)
+        public PlatformGraphicsException(string formatMessage, int errorCode, params object[] args)
                 : base(string.Format(formatMessage, args))
         {
             this.ErrorCode = errorCode;

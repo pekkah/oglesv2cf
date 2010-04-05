@@ -17,19 +17,19 @@
     {
         private int exitCounter;
 
-        protected glBuffer IndiceBuffer
+        protected DeviceBuffer IndiceBuffer
         {
             get;
             private set;
         }
 
-        protected SampleShader Shader
+        protected SampleShader ShaderProgram
         {
             get;
             private set;
         }
 
-        protected glBuffer VertexBuffer
+        protected DeviceBuffer VertexBuffer
         {
             get;
             private set;
@@ -41,7 +41,7 @@
             {
                 this.VertexBuffer.Dispose();
                 this.IndiceBuffer.Dispose();
-                this.Shader.Dispose();
+                this.ShaderProgram.Dispose();
             }
 
             base.Dispose(disposing);
@@ -73,28 +73,28 @@
 
                 // load shaders
                 var vertexShaderFile = Path.Combine(currentDirectory, "VertexShader.txt");
-                var vertexShader = glShader.CompileFromFile(vertexShaderFile, NativeGl.GL_VERTEX_SHADER);
+                var vertexShader = Shader.CompileFromFile(vertexShaderFile, NativeGl.GL_VERTEX_SHADER);
 
                 var fragmentShaderFile = Path.Combine(currentDirectory, "FragmentShader.txt");
-                var fragmentShader = glShader.CompileFromFile(fragmentShaderFile, NativeGl.GL_FRAGMENT_SHADER);
+                var fragmentShader = Shader.CompileFromFile(fragmentShaderFile, NativeGl.GL_FRAGMENT_SHADER);
 
                 // attach to program
-                this.Shader = new SampleShader();
-                this.Shader.AttachShader(vertexShader);
-                this.Shader.AttachShader(fragmentShader);
+                this.ShaderProgram = new SampleShader();
+                this.ShaderProgram.AttachShader(vertexShader);
+                this.ShaderProgram.AttachShader(fragmentShader);
 
                 // link shader program
-                if (!this.Shader.Link())
+                if (!this.ShaderProgram.Link())
                 {
-                    var errorMessage = this.Shader.GetInfoLog();
-                    this.Shader.Dispose();
+                    var errorMessage = this.ShaderProgram.GetInfoLog();
+                    this.ShaderProgram.Dispose();
 
                     throw new InvalidOperationException(string.Format("Failed to link program.\n {0}", errorMessage));
                 }
 
                 // create buffer's to contain our quad
-                this.VertexBuffer = new glBuffer(NativeGl.GL_ARRAY_BUFFER);
-                this.IndiceBuffer = new glBuffer(NativeGl.GL_ELEMENT_ARRAY_BUFFER);
+                this.VertexBuffer = new DeviceBuffer(NativeGl.GL_ARRAY_BUFFER);
+                this.IndiceBuffer = new DeviceBuffer(NativeGl.GL_ELEMENT_ARRAY_BUFFER);
 
                 Vertex[] quadVertices = new[]
                                             {
@@ -135,18 +135,17 @@
                 this.IndiceBuffer.BufferData(Marshal.SizeOf(typeof(uint)) * 4, indices, NativeGl.GL_STATIC_DRAW);
 
                 // enable vertex attrib pointers
-                NativeGl.glVertexAttribPointer(
-                        this.Shader.PositionHandle,
+                this.GraphicsDevice.VertexAttribPointer(
+                        this.ShaderProgram.PositionHandle,
                         3,
                         NativeGl.GL_FLOAT,
                         NativeGl.GL_FALSE,
-                        Marshal.SizeOf(typeof(Vertex)),
-                        IntPtr.Zero);
+                        Marshal.SizeOf(typeof(Vertex)));
 
-                NativeGl.glEnableVertexAttribArray(this.Shader.PositionHandle);
+                this.GraphicsDevice.EnabledVertexAttribArray(this.ShaderProgram.PositionHandle);
 
                 // use the shader
-                this.Shader.Use();
+                this.ShaderProgram.Use();
 
                 // our camera matrix
                 this.View = Matrix4.LookAt(0, 0, 1, 0, 0, 0, 0, 1, 0);
@@ -158,24 +157,10 @@
                 // world matrix
                 this.World = Matrix4.Identity;
 
-                // TODO : Clean the matrix stuff
-                unsafe
-                {
-                    fixed (float* matrixPtr = &this.View.Row0.X)
-                    {
-                        NativeGl.glUniformMatrix4fv(this.Shader.ViewHandle, 1, 0, matrixPtr);
-                    }
+                this.ShaderProgram.UniformMatrix4Fv(this.ShaderProgram.ViewHandle, 1, 0, this.View);
+                this.ShaderProgram.UniformMatrix4Fv(this.ShaderProgram.ProjectionHandle, 1, 0, this.Projection);
+                this.ShaderProgram.UniformMatrix4Fv(this.ShaderProgram.WorldHandle, 1, 0, this.World);
 
-                    fixed (float* matrixPtr = &this.Projection.Row0.X)
-                    {
-                        NativeGl.glUniformMatrix4fv(this.Shader.ProjectionHandle, 1, 0, matrixPtr);
-                    }
-
-                    fixed (float* matrixPtr = &this.World.Row0.X)
-                    {
-                        NativeGl.glUniformMatrix4fv(this.Shader.WorldHandle, 1, 0, matrixPtr);
-                    }
-                }
             }
             catch (Exception x)
             {
@@ -185,23 +170,18 @@
 
         protected override void OnRender(double deltaTime)
         {
-            unsafe
-            {
-                fixed (float* matrixPtr = &this.World.Row0.X)
-                {
-                    NativeGl.glUniformMatrix4fv(this.Shader.WorldHandle, 1, 0, matrixPtr);
-                }
-            }
+            this.ShaderProgram.UniformMatrix4Fv(this.ShaderProgram.WorldHandle, 1, 0, this.World);
 
-            NativeGl.glClear(NativeGl.GL_COLOR_BUFFER_BIT);
-            NativeGl.glDrawElements(NativeGl.GL_TRIANGLE_STRIP, 4, NativeGl.GL_UNSIGNED_INT, IntPtr.Zero);
+            this.GraphicsDevice.Clear(NativeGl.GL_COLOR_BUFFER_BIT);
+
+            this.GraphicsDevice.DrawElements(NativeGl.GL_TRIANGLE_STRIP, 4, NativeGl.GL_UNSIGNED_INT);
         }
 
         private float rotationAngle;
 
         protected override void OnUpdate(double deltaTime)
         {
-            rotationAngle += (float)deltaTime * 0.0001f;
+            rotationAngle += (float)deltaTime * 0.01f;
 
             if (rotationAngle >= 360)
             {

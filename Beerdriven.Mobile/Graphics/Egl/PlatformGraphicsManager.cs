@@ -72,7 +72,7 @@ namespace Beerdriven.Mobile.Graphics.Egl
                     configs.Length,
                     out numberOfConfigsFound) == NativeEgl.EGL_FALSE)
             {
-                throw new DeviceOperationException("Could not choose configurations.", NativeEgl.eglGetError());
+                throw new PlatformGraphicsException("Could not choose configurations.", NativeEgl.eglGetError());
             }
 
             var result = new List<Config>();
@@ -108,7 +108,7 @@ namespace Beerdriven.Mobile.Graphics.Egl
             {
                 if (NativeEgl.eglTerminate(this.display.DisplayPointer) == NativeEgl.EGL_FALSE)
                 {
-                    throw new DeviceOperationException(
+                    throw new PlatformGraphicsException(
                             "Failed to terminate egl display connection", NativeEgl.eglGetError());
                 }
             }
@@ -123,7 +123,7 @@ namespace Beerdriven.Mobile.Graphics.Egl
             if (NativeEgl.eglInitialize(this.display.DisplayPointer, out major, out minor) == NativeEgl.EGL_FALSE)
             {
                 var errorCode = NativeEgl.eglGetError();
-                throw new DeviceOperationException("Could not intitialize egl display connection.", errorCode);
+                throw new PlatformGraphicsException("Could not intitialize egl display connection.", errorCode);
             }
 
             this.Version = new Version(major, minor);

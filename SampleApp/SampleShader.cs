@@ -1,8 +1,11 @@
 ﻿namespace SampleApp
 {
+    using System;
     using Beerdriven.Mobile.Graphics.ES20;
+    using Beerdriven.Mobile.Graphics.ES20.Interop;
+    using OpenTK;
 
-    public class SampleShader : glShaderProgram
+    public class SampleShader : ShaderProgram
     {
         public uint PositionHandle;
 

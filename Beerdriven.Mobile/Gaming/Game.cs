@@ -30,6 +30,7 @@ namespace Beerdriven.Mobile.Gaming
 {
     using System;
     using System.Diagnostics;
+    using System.Drawing;
     using System.Linq;
     using System.Windows.Forms;
     using Graphics;
@@ -52,27 +53,53 @@ namespace Beerdriven.Mobile.Gaming
 
         private long counterFrequency;
 
-        private double requestedFrameRate = 1d / 60d;
+        private double requestedUpdateDelta = 1d / 30d;
 
-        private double currentFrameRate = 0;
+        private long updateDeltaCount;
 
-        private long frameDeltaCount;
+        private double updateDeltaSeconds;
 
-        private double frameDeltaSeconds;
+        private long updateEndCount;
 
-        private long frameEndCount;
+        private long updateStartCount;
 
-        private long frameStartCount;
+        private double requestedRenderDelta = 1d / 30d;
+
+        private long renderDeltaCount;
+
+        private double renderDeltaSeconds;
+
+        private long renderEndCount;
+
+        private long renderStartCount;
 
         private NativeMessage message;
 
-        protected IDisplayManager displayManager;
+        protected IDisplayManager DisplayManager
+        {
+            get;
+            private set;
+        }
 
-        protected WindowSurface renderingSurface;
+        protected WindowSurface RenderingSurface
+        {
+            get;
+            private set;
+        }
 
-        protected RenderingContext renderingContext;
+        protected RenderingContext RenderingContext
+        {
+            get;
+            private set;
+        }
 
         protected IPlatformGraphicsManager PlatformManager
+        {
+            get;
+            private set;
+        }
+
+        protected IGraphicsDevice GraphicsDevice
         {
             get;
             private set;
@@ -107,8 +134,8 @@ namespace Beerdriven.Mobile.Gaming
         {
             if (disposing)
             {
-                renderingContext.Dispose();
-                renderingSurface.Destroy();
+                this.RenderingContext.Dispose();
+                this.RenderingSurface.Destroy();
                 this.PlatformManager.Terminate();
             }
 
@@ -119,12 +146,13 @@ namespace Beerdriven.Mobile.Gaming
         {
             try
             {
+                // platform graphics setup
                 this.RenderingWindow = new RenderingWindow();
                 this.RenderingWindow.Show();
 
-                this.displayManager = new DisplayManager();
+                this.DisplayManager = new DisplayManager();
 
-                this.PlatformManager = new PlatformGraphicsManager(this.displayManager.GetDisplay(this.RenderingWindow));
+                this.PlatformManager = new PlatformGraphicsManager(this.DisplayManager.GetDisplay(this.RenderingWindow));
 
                 this.PlatformManager.BindApi(NativeEgl.EGL_OPENGL_ES_API);
 
@@ -143,15 +171,22 @@ namespace Beerdriven.Mobile.Gaming
                 contextAttribs.Add(NativeEgl.EGL_CONTEXT_CLIENT_VERSION, 2);
                 contextAttribs.AddEnd();
 
-                this.renderingContext = this.PlatformManager.CreateContext(config, contextAttribs);
+                this.RenderingContext = this.PlatformManager.CreateContext(config, contextAttribs);
 
-                this.renderingSurface = this.PlatformManager.CreateWindowSurface(config, this.RenderingWindow);
+                this.RenderingSurface = this.PlatformManager.CreateWindowSurface(config, this.RenderingWindow);
 
-                this.renderingContext.MakeCurrent(this.renderingSurface, this.renderingSurface);
+                this.RenderingContext.MakeCurrent(this.RenderingSurface, this.RenderingSurface);
 
-                NativeGl.glClearColor(0, 0, 0, 1f);
-
-                NativeGl.glViewport(0, 0, this.RenderingWindow.Width, this.RenderingWindow.Height);
+                // graphics device setup
+                this.GraphicsDevice = new GraphicsDevice
+                                          {
+                                                  ClearColor = new Vector4(0, 0, 0, 1f),
+                                                  Viewport = new Rectangle(
+                                                      0, 
+                                                      0, 
+                                                      this.RenderingWindow.Width, 
+                                                      this.RenderingWindow.Height)
+                                          };
 
                 var error = NativeGl.glGetError();
 
@@ -161,7 +196,7 @@ namespace Beerdriven.Mobile.Gaming
 
                 }
             }
-            catch (DeviceOperationException x)
+            catch (PlatformGraphicsException x)
             {
                 MessageBox.Show(x.ToString());
                 this.ExitGame = true;
@@ -184,7 +219,7 @@ namespace Beerdriven.Mobile.Gaming
         {
             this.OnRender(deltaTime);
 
-            this.renderingSurface.SwapBuffers();
+            this.RenderingSurface.SwapBuffers();
 
             var errorCode = NativeGl.glGetError();
 
@@ -202,11 +237,12 @@ namespace Beerdriven.Mobile.Gaming
         {
             NativeCore.QueryPerformanceFrequency(ref this.counterFrequency);
 
-            NativeCore.QueryPerformanceCounter(ref this.frameStartCount);
+            NativeCore.QueryPerformanceCounter(ref this.updateStartCount);
 
-            this.frameEndCount = this.frameStartCount;
+            this.updateEndCount = this.updateStartCount;
 
-            this.currentFrameRate = this.requestedFrameRate;
+            this.renderStartCount = this.updateEndCount;
+            this.renderEndCount = this.renderStartCount;
 
             while (!this.RunGameLoop())
             {
@@ -222,22 +258,26 @@ namespace Beerdriven.Mobile.Gaming
         {
             while (!NativeCore.PeekMessage(out this.message, IntPtr.Zero, 0, 0, 0))
             {
-                NativeCore.QueryPerformanceCounter(ref this.frameEndCount);
+                NativeCore.QueryPerformanceCounter(ref this.updateEndCount);
+                NativeCore.QueryPerformanceCounter(ref this.renderEndCount);
 
-                this.frameDeltaCount = this.frameEndCount - this.frameStartCount;
-                this.frameDeltaSeconds = this.frameDeltaCount / (double)this.counterFrequency;
+                this.updateDeltaCount = this.updateEndCount - this.updateStartCount;
+                this.updateDeltaSeconds = this.updateDeltaCount / (double)this.counterFrequency;
 
-                this.Update(this.frameDeltaSeconds);
+                this.renderDeltaCount = this.renderEndCount - this.renderStartCount;
+                this.renderDeltaSeconds = this.renderDeltaCount / (double)this.counterFrequency;
 
-                // Simple framerate controller. Updates are done constantly but rendering only at requested fps.
-                if (frameDeltaSeconds < requestedFrameRate)
-                {   
-                    continue;
+                if (this.updateDeltaSeconds >= this.requestedUpdateDelta)
+                {
+                    this.Update(this.updateDeltaSeconds);
+                    NativeCore.QueryPerformanceCounter(ref this.updateStartCount);
                 }
 
-                this.Render(this.frameDeltaSeconds);
-    
-                NativeCore.QueryPerformanceCounter(ref this.frameStartCount);
+                if (this.renderDeltaSeconds >= this.requestedRenderDelta)
+                {
+                    this.Render(this.renderDeltaSeconds);
+                    NativeCore.QueryPerformanceCounter(ref this.renderStartCount);
+                }
             }
 
             this.OnHandleMessage(this.message);

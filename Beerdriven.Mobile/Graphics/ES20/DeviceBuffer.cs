@@ -33,13 +33,13 @@ namespace Beerdriven.Mobile.Graphics.ES20
     using Interop;
     using OpenGLESv2;
 
-    public class glBuffer : Disposable
+    public class DeviceBuffer : Disposable
     {
         private readonly uint target;
 
         private uint buffer;
 
-        public glBuffer(uint target)
+        public DeviceBuffer(uint target)
         {
             this.target = target;
             this.GenBuffers();

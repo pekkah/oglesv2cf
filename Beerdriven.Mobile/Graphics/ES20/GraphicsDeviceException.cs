@@ -31,19 +31,19 @@ namespace Beerdriven.Mobile.Graphics.ES20
     using System;
     using System.Text;
 
-    public class glException : Exception
+    public class GraphicsDeviceException : Exception
     {
-        public glException(string message) : base(message)
+        public GraphicsDeviceException(string message) : base(message)
         {
         }
 
-        public glException(string message, int errorCode) : base(message)
+        public GraphicsDeviceException(string message, int errorCode) : base(message)
         {
             this.ErrorCode = errorCode;
             this.UpdateErrorId();
         }
 
-        public glException(string formatMessage, int errorCode, params object[] args)
+        public GraphicsDeviceException(string formatMessage, int errorCode, params object[] args)
                 : base(string.Format(formatMessage, args))
         {
             this.ErrorCode = errorCode;

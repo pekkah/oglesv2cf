@@ -72,7 +72,7 @@ namespace Beerdriven.Mobile.Graphics.Egl
 
             if (this.DisplayPointer == IntPtr.Zero)
             {
-                throw new DeviceOperationException("Could not get display", NativeEgl.eglGetError());
+                throw new PlatformGraphicsException("Could not get display", NativeEgl.eglGetError());
             }
         }
     }

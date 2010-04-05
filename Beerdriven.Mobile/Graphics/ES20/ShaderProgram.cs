@@ -33,20 +33,21 @@ namespace Beerdriven.Mobile.Graphics.ES20
     using Interop;
     using Mobile.Interop;
     using OpenGLESv2;
+    using OpenTK;
 
-    public class glShaderProgram : Disposable
+    public class ShaderProgram : Disposable
     {
         private const int MaxInfologLength = 2024;
 
-        private readonly List<glShader> shaders;
+        private readonly List<Shader> shaders;
 
-        public glShaderProgram()
+        public ShaderProgram()
         {
             this.Create();
-            this.shaders = new List<glShader>();
+            this.shaders = new List<Shader>();
         }
 
-        public IEnumerable<glShader> Shaders
+        public IEnumerable<Shader> Shaders
         {
             get
             {
@@ -54,22 +55,22 @@ namespace Beerdriven.Mobile.Graphics.ES20
             }
         }
 
-        protected uint Program
+        protected uint ProgramPointer
         {
             get;
             private set;
         }
 
-        public void AttachShader(glShader shader)
+        public void AttachShader(Shader shader)
         {
-            NativeGl.glAttachShader(this.Program, shader.Shader);
+            NativeGl.glAttachShader(this.ProgramPointer, shader.ShaderPointer);
             this.shaders.Add(shader);
         }
 
         public uint GetAttribLocation(string name)
         {
             var pname = MarshalExtensions.StringToPtrAnsi(name);
-            var handle = NativeGl.glGetAttribLocation(this.Program, pname);
+            var handle = NativeGl.glGetAttribLocation(this.ProgramPointer, pname);
             Marshal.FreeHGlobal(pname);
 
             return handle;
@@ -79,7 +80,7 @@ namespace Beerdriven.Mobile.Graphics.ES20
         {
             int length;
             var error = new char[MaxInfologLength];
-            NativeGl.glGetProgramInfoLog(this.Program, MaxInfologLength, out length, error);
+            NativeGl.glGetProgramInfoLog(this.ProgramPointer, MaxInfologLength, out length, error);
 
             return StringExtensions.GetAnsiString(error, length);
         }
@@ -87,7 +88,7 @@ namespace Beerdriven.Mobile.Graphics.ES20
         public uint GetUniformLocation(string name)
         {
             var pname = MarshalExtensions.StringToPtrAnsi(name);
-            var handle = NativeGl.glGetUniformLocation(this.Program, pname);
+            var handle = NativeGl.glGetUniformLocation(this.ProgramPointer, pname);
             Marshal.FreeHGlobal(pname);
 
             return handle;
@@ -97,14 +98,14 @@ namespace Beerdriven.Mobile.Graphics.ES20
         {
             this.OnBeforeLinked();
 
-            NativeGl.glLinkProgram(this.Program);
+            NativeGl.glLinkProgram(this.ProgramPointer);
 
             var success = new[]
                               {
                                       -1
                               };
 
-            NativeGl.glGetProgramiv(this.Program, NativeGl.GL_LINK_STATUS, success);
+            NativeGl.glGetProgramiv(this.ProgramPointer, NativeGl.GL_LINK_STATUS, success);
 
             var ok = success[0] == NativeGl.GL_TRUE;
 
@@ -123,7 +124,7 @@ namespace Beerdriven.Mobile.Graphics.ES20
 
         public void Use()
         {
-            NativeGl.glUseProgram(this.Program);
+            NativeGl.glUseProgram(this.ProgramPointer);
         }
 
         protected virtual void OnBeforeLinked()
@@ -140,14 +141,14 @@ namespace Beerdriven.Mobile.Graphics.ES20
             {
                 foreach (var shader in this.shaders)
                 {
-                    NativeGl.glDetachShader(this.Program, shader.Shader);
+                    NativeGl.glDetachShader(this.ProgramPointer, shader.ShaderPointer);
                     shader.Dispose();
                 }
             }
 
-            if (this.Program != 0)
+            if (this.ProgramPointer != 0)
             {
-                NativeGl.glDeleteProgram(this.Program);
+                NativeGl.glDeleteProgram(this.ProgramPointer);
             }
 
             base.Dispose(disposing);
@@ -155,7 +156,16 @@ namespace Beerdriven.Mobile.Graphics.ES20
 
         private void Create()
         {
-            this.Program = NativeGl.glCreateProgram();
+            this.ProgramPointer = NativeGl.glCreateProgram();
+        }
+
+        public void UniformMatrix4Fv(uint location, int count, byte transpose, Matrix4 matrix)
+        {
+            unsafe
+            {
+                float* matrixPtr = &matrix.Row0.X;
+                NativeGl.glUniformMatrix4fv(location, count, transpose, matrixPtr);
+            }
         }
     }
 }

@@ -35,11 +35,11 @@ namespace Beerdriven.Mobile.Graphics.ES20
     using Mobile.Interop;
     using OpenGLESv2;
 
-    public class glShader : Disposable
+    public class Shader : Disposable
     {
         private const int MaxInfologLength = 2024;
 
-        public glShader(uint type)
+        public Shader(uint type)
         {
             this.Type = type;
             this.Create();
@@ -51,20 +51,20 @@ namespace Beerdriven.Mobile.Graphics.ES20
             private set;
         }
 
-        internal uint Shader
+        internal uint ShaderPointer
         {
             get;
             private set;
         }
 
-        public static glShader CompileFromFile(string fileName, uint type)
+        public static Shader CompileFromFile(string fileName, uint type)
         {
             if (!File.Exists(fileName))
             {
                 throw new ArgumentException("File does not exist");
             }
 
-            glShader shader = new glShader(type);
+            Shader shader = new Shader(type);
 
             var source = string.Empty;
 
@@ -89,14 +89,14 @@ namespace Beerdriven.Mobile.Graphics.ES20
 
         public bool Compile()
         {
-            NativeGl.glCompileShader(this.Shader);
+            NativeGl.glCompileShader(this.ShaderPointer);
 
             var success = new[]
                               {
                                       -1
                               };
 
-            NativeGl.glGetShaderiv(this.Shader, NativeGl.GL_COMPILE_STATUS, success);
+            NativeGl.glGetShaderiv(this.ShaderPointer, NativeGl.GL_COMPILE_STATUS, success);
 
             return success[0] == NativeGl.GL_TRUE;
         }
@@ -105,7 +105,7 @@ namespace Beerdriven.Mobile.Graphics.ES20
         {
             int length;
             var error = new char[MaxInfologLength];
-            NativeGl.glGetShaderInfoLog(this.Shader, MaxInfologLength, out length, error);
+            NativeGl.glGetShaderInfoLog(this.ShaderPointer, MaxInfologLength, out length, error);
 
             return StringExtensions.GetAnsiString(error, length);
         }
@@ -120,16 +120,16 @@ namespace Beerdriven.Mobile.Graphics.ES20
                 IntPtr strPtr = MarshalExtensions.StringToPtrAnsi(source);
                 ptrArray[0] = strPtr;
 
-                NativeGl.glShaderSource(this.Shader, 1, ptrArray, &length);
+                NativeGl.glShaderSource(this.ShaderPointer, 1, ptrArray, &length);
                 Marshal.FreeHGlobal(strPtr);
             }
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (this.Shader != 0)
+            if (this.ShaderPointer != 0)
             {
-                NativeGl.glDeleteShader(this.Shader);
+                NativeGl.glDeleteShader(this.ShaderPointer);
             }
 
             base.Dispose(disposing);
@@ -137,7 +137,7 @@ namespace Beerdriven.Mobile.Graphics.ES20
 
         private void Create()
         {
-            this.Shader = NativeGl.glCreateShader(this.Type);
+            this.ShaderPointer = NativeGl.glCreateShader(this.Type);
         }
     }
 }

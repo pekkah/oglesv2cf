@@ -91,7 +91,7 @@ namespace Beerdriven.Mobile.Graphics.Egl
 
             if (this.ContextPointer == IntPtr.Zero)
             {
-                throw new DeviceOperationException("Failed to create context.", NativeEgl.eglGetError());
+                throw new PlatformGraphicsException("Failed to create context.", NativeEgl.eglGetError());
             }
 
             this.isInitialized = true;
@@ -101,7 +101,7 @@ namespace Beerdriven.Mobile.Graphics.Egl
         {
             if (NativeEgl.eglMakeCurrent(this.displayPointer, draw, read, this.ContextPointer) == NativeEgl.EGL_FALSE)
             {
-                throw new DeviceOperationException(
+                throw new PlatformGraphicsException(
                         "Could not set rendering context to current.", NativeEgl.eglGetError());
             }
         }

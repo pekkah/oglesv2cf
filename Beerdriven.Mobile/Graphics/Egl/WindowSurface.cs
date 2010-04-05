@@ -65,7 +65,7 @@ namespace Beerdriven.Mobile.Graphics.Egl
                 if (NativeEgl.eglDestroySurface(this.displayPointer, this.SurfacePointer) == NativeEgl.EGL_FALSE)
                 {
                     var errorCode = NativeEgl.eglGetError();
-                    throw new DeviceOperationException("Could not destroy surface.", errorCode);
+                    throw new PlatformGraphicsException("Could not destroy surface.", errorCode);
                 }
             }
 
@@ -83,7 +83,7 @@ namespace Beerdriven.Mobile.Graphics.Egl
 
                 var errorMessage = string.Format(
                         "Could not create window surface. Error code {0}", errorCode.ToString("X"));
-                throw new DeviceOperationException(errorMessage, errorCode);
+                throw new PlatformGraphicsException(errorMessage, errorCode);
             }
 
             this.isInitialized = true;
