@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleApp", "SampleApp\Samp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTK.Math.CompactFramework", "OpenTK.Math.CompactFramework\OpenTK.Math.CompactFramework.csproj", "{21A6057D-E3B5-4719-A9A0-C40F53DC3CB4}"
 EndProject
+Project("{B900F1C2-3D47-4FEC-85B3-04AAF18C3634}") = "Beerdriven.Mobile.SampleAppSetup", "Beerdriven.Mobile.SampleAppSetup\Beerdriven.Mobile.SampleAppSetup.vddproj", "{C7B0159D-6FCE-401F-B8E0-771C135B4997}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,8 @@ Global
 		{21A6057D-E3B5-4719-A9A0-C40F53DC3CB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21A6057D-E3B5-4719-A9A0-C40F53DC3CB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21A6057D-E3B5-4719-A9A0-C40F53DC3CB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7B0159D-6FCE-401F-B8E0-771C135B4997}.Debug|Any CPU.ActiveCfg = Debug
+		{C7B0159D-6FCE-401F-B8E0-771C135B4997}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
