@@ -36,6 +36,7 @@ namespace Beerdriven.Mobile.Gaming
     using Graphics;
     using Graphics.Egl;
     using Graphics.Egl.Interop;
+    using Graphics.ES20;
     using Graphics.ES20.Interop;
     using Graphics.OpenGLESv2;
     using Interop;

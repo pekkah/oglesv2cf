@@ -122,6 +122,15 @@ namespace Beerdriven.Mobile.Graphics.ES20
             NativeGl.glUseProgram(0);
         }
 
+        public void UniformMatrix4Fv(uint location, int count, byte transpose, Matrix4 matrix)
+        {
+            unsafe
+            {
+                float* matrixPtr = &matrix.Row0.X;
+                NativeGl.glUniformMatrix4fv(location, count, transpose, matrixPtr);
+            }
+        }
+
         public void Use()
         {
             NativeGl.glUseProgram(this.ProgramPointer);
@@ -157,15 +166,6 @@ namespace Beerdriven.Mobile.Graphics.ES20
         private void Create()
         {
             this.ProgramPointer = NativeGl.glCreateProgram();
-        }
-
-        public void UniformMatrix4Fv(uint location, int count, byte transpose, Matrix4 matrix)
-        {
-            unsafe
-            {
-                float* matrixPtr = &matrix.Row0.X;
-                NativeGl.glUniformMatrix4fv(location, count, transpose, matrixPtr);
-            }
         }
     }
 }
