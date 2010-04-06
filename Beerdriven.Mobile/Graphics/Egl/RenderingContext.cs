@@ -29,24 +29,25 @@
 namespace Beerdriven.Mobile.Graphics.Egl
 {
     using System;
+    using Enums;
     using Interop;
     using OpenGLESv2;
 
     public class RenderingContext : Disposable
     {
-        private readonly AttribList attribList;
-
         private readonly IntPtr configPointer;
+
+        private readonly ContextVersion clientVersion;
 
         private readonly IntPtr displayPointer;
 
         private bool isInitialized;
 
-        internal RenderingContext(IntPtr displayPointer, IntPtr configPointer, AttribList attribList)
+        internal RenderingContext(IntPtr displayPointer, IntPtr configPointer, ContextVersion clientVersion)
         {
             this.displayPointer = displayPointer;
             this.configPointer = configPointer;
-            this.attribList = attribList;
+            this.clientVersion = clientVersion;
             this.Initialize();
         }
 
@@ -86,8 +87,12 @@ namespace Beerdriven.Mobile.Graphics.Egl
 
         protected void Initialize()
         {
+            var contextAttribs = new Attribs<int>();
+            contextAttribs.Add(NativeEgl.EGL_CONTEXT_CLIENT_VERSION, (int)this.clientVersion);
+            contextAttribs.AddEnd();
+
             this.ContextPointer = NativeEgl.eglCreateContext(
-                    this.displayPointer, this.configPointer, IntPtr.Zero, this.attribList.ToIntArray());
+                    this.displayPointer, this.configPointer, IntPtr.Zero, contextAttribs.ToIntArray());
 
             if (this.ContextPointer == IntPtr.Zero)
             {

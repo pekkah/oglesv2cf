@@ -31,6 +31,7 @@ namespace Beerdriven.Mobile.Graphics.Egl
     using System;
     using System.Collections.Generic;
     using System.Windows.Forms;
+    using Enums;
     using Interop;
     using OpenGLESv2;
 
@@ -60,14 +61,14 @@ namespace Beerdriven.Mobile.Graphics.Egl
             NativeEgl.eglBindAPI(api);
         }
 
-        public IEnumerable<Config> ChooseConfigs(AttribList attribList, int numberOfConfigsToReturn)
+        public IEnumerable<Config> ChooseConfigs(Attribs<ConfigAttributes> attribs, int numberOfConfigsToReturn)
         {
             var configs = new IntPtr[numberOfConfigsToReturn];
 
             int numberOfConfigsFound;
             if (NativeEgl.eglChooseConfig(
                     this.display.DisplayPointer,
-                    attribList.ToIntArray(),
+                    attribs.ToIntArray(),
                     configs,
                     configs.Length,
                     out numberOfConfigsFound) == NativeEgl.EGL_FALSE)
@@ -85,9 +86,9 @@ namespace Beerdriven.Mobile.Graphics.Egl
             return result;
         }
 
-        public RenderingContext CreateContext(Config config, AttribList attribList)
+        public RenderingContext CreateContext(Config config, ContextVersion attribs)
         {
-            var renderingContext = new RenderingContext(this.display.DisplayPointer, config.ConfigPointer, attribList);
+            var renderingContext = new RenderingContext(this.display.DisplayPointer, config.ConfigPointer, attribs);
 
             return renderingContext;
         }

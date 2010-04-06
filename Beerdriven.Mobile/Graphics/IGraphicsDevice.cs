@@ -29,6 +29,7 @@
 namespace Beerdriven.Mobile.Graphics
 {
     using System.Drawing;
+    using ES20;
     using OpenTK;
 
     public interface IGraphicsDevice
@@ -56,5 +57,11 @@ namespace Beerdriven.Mobile.Graphics
         void VertexAttribPointer(uint indx, int size, uint type, byte normalized, int stride);
 
         IRenderingScope Begin();
+
+        DeviceBuffer CreateBuffer(uint target);
+
+        void UseProgram(ShaderProgram program);
+
+        void BindBuffer(DeviceBuffer buffer);
     }
 }

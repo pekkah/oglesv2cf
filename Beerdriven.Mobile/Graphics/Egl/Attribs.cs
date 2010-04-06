@@ -28,21 +28,22 @@
 
 namespace Beerdriven.Mobile.Graphics.Egl
 {
+    using System;
     using System.Collections.Generic;
     using Interop;
 
-    public class AttribList
+    public class Attribs<TAttribsEnum>
     {
         internal readonly List<int> Attributes;
 
-        public AttribList()
+        public Attribs()
         {
             this.Attributes = new List<int>();
         }
 
-        public void Add(int attrib, int value)
+        public void Add(TAttribsEnum attrib, int value)
         {
-            this.Attributes.Add(attrib);
+            this.Attributes.Add(Convert.ToInt32(attrib));
             this.Attributes.Add(value);
         }
 
@@ -54,7 +55,7 @@ namespace Beerdriven.Mobile.Graphics.Egl
 
     public static class AttribListExtensions
     {
-        public static int[] ToIntArray(this AttribList list)
+        public static int[] ToIntArray<TAttributeEnum>(this Attribs<TAttributeEnum> list)
         {
             if (list == null || list.Attributes.Count == 0)
             {

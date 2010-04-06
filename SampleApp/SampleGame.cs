@@ -7,6 +7,7 @@
     using System.Windows.Forms;
     using Beerdriven.Mobile.Gaming;
     using Beerdriven.Mobile.Graphics.Egl;
+    using Beerdriven.Mobile.Graphics.Egl.Enums;
     using Beerdriven.Mobile.Graphics.Egl.Interop;
     using Beerdriven.Mobile.Graphics.ES20;
     using Beerdriven.Mobile.Graphics.ES20.Interop;
@@ -47,11 +48,11 @@
             base.Dispose(disposing);
         }
 
-        protected override void OnConfigureAttributes(AttribList attribs)
+        protected override void OnConfigureAttributes(Attribs<ConfigAttributes> attribs)
         {
-            attribs.Add(NativeEgl.EGL_RED_SIZE, 5);
-            attribs.Add(NativeEgl.EGL_GREEN_SIZE, 6);
-            attribs.Add(NativeEgl.EGL_BLUE_SIZE, 5);
+            attribs.Add(ConfigAttributes.EGL_RED_SIZE, 5);
+            attribs.Add(ConfigAttributes.EGL_GREEN_SIZE, 6);
+            attribs.Add(ConfigAttributes.EGL_BLUE_SIZE, 5);
             attribs.AddEnd();
         }
 
@@ -92,9 +93,9 @@
                     throw new InvalidOperationException(string.Format("Failed to link program.\n {0}", errorMessage));
                 }
 
-                // create buffer's to contain our quad
-                this.VertexBuffer = new DeviceBuffer(NativeGl.GL_ARRAY_BUFFER);
-                this.IndiceBuffer = new DeviceBuffer(NativeGl.GL_ELEMENT_ARRAY_BUFFER);
+                // create buffers to contain our quad
+                this.VertexBuffer = this.GraphicsDevice.CreateBuffer(NativeGl.GL_ARRAY_BUFFER);
+                this.IndiceBuffer = this.GraphicsDevice.CreateBuffer(NativeGl.GL_ELEMENT_ARRAY_BUFFER);
 
                 Vertex[] quadVertices = new[]
                                             {
@@ -122,7 +123,7 @@
                                             };
 
                 // upload data to the buffers
-                this.VertexBuffer.Bind();
+                this.GraphicsDevice.BindBuffer(this.VertexBuffer);
                 this.VertexBuffer.BufferData(
                         quadVertices.Length * Marshal.SizeOf(typeof(Vertex)), quadVertices, NativeGl.GL_STATIC_DRAW);
 
@@ -131,7 +132,7 @@
                                              0, 1, 2, 3
                                      };
 
-                this.IndiceBuffer.Bind();
+                this.GraphicsDevice.BindBuffer(this.IndiceBuffer);
                 this.IndiceBuffer.BufferData(Marshal.SizeOf(typeof(uint)) * 4, indices, NativeGl.GL_STATIC_DRAW);
 
                 // enable vertex attrib pointers
@@ -165,6 +166,7 @@
             catch (Exception x)
             {
                 MessageBox.Show(x.ToString());
+                this.ExitGame = true;
             }
         }
 

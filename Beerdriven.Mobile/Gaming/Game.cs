@@ -35,6 +35,7 @@ namespace Beerdriven.Mobile.Gaming
     using System.Windows.Forms;
     using Graphics;
     using Graphics.Egl;
+    using Graphics.Egl.Enums;
     using Graphics.Egl.Interop;
     using Graphics.ES20;
     using Graphics.ES20.Interop;
@@ -119,7 +120,7 @@ namespace Beerdriven.Mobile.Gaming
             this.RunApplication();
         }
 
-        protected abstract void OnConfigureAttributes(AttribList attribs);
+        protected abstract void OnConfigureAttributes(Attribs<ConfigAttributes> attribs);
 
         protected abstract void OnLoadContent();
 
@@ -157,7 +158,7 @@ namespace Beerdriven.Mobile.Gaming
 
                 this.PlatformManager.BindApi(NativeEgl.EGL_OPENGL_ES_API);
 
-                var attribs = new AttribList();
+                var attribs = new Attribs<ConfigAttributes>();
 
                 this.OnConfigureAttributes(attribs);
 
@@ -168,11 +169,7 @@ namespace Beerdriven.Mobile.Gaming
                     throw new InvalidOperationException("Could not find matching configuration");
                 }
 
-                var contextAttribs = new AttribList();
-                contextAttribs.Add(NativeEgl.EGL_CONTEXT_CLIENT_VERSION, 2);
-                contextAttribs.AddEnd();
-
-                this.RenderingContext = this.PlatformManager.CreateContext(config, contextAttribs);
+                this.RenderingContext = this.PlatformManager.CreateContext(config, ContextVersion.OPENGL_ES_2);
 
                 this.RenderingSurface = this.PlatformManager.CreateWindowSurface(config, this.RenderingWindow);
 

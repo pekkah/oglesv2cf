@@ -26,23 +26,20 @@
 
 #endregion
 
-namespace Beerdriven.Mobile.Graphics
+namespace Beerdriven.Mobile.Graphics.Egl.Enums
 {
-    using System.Collections.Generic;
-    using System.Windows.Forms;
-    using Egl;
-    using Egl.Enums;
+    using Interop;
 
-    public interface IPlatformGraphicsManager
+    public enum Boolean : uint
     {
-        void BindApi(uint api);
+        /// <summary>
+        ///   True (1).
+        /// </summary>
+        EGL_TRUE = NativeEgl.EGL_TRUE,
 
-        IEnumerable<Config> ChooseConfigs(Attribs<ConfigAttributes> attribs, int numberOfConfigsToReturn);
-
-        RenderingContext CreateContext(Config config, ContextVersion clientVersion);
-
-        WindowSurface CreateWindowSurface(Config config, Form window);
-
-        void Terminate();
+        /// <summary>
+        ///   False (0).
+        /// </summary>
+        EGL_FALSE = NativeEgl.EGL_FALSE,
     }
 }

@@ -35,37 +35,38 @@ namespace Beerdriven.Mobile.Graphics.ES20
 
     public class DeviceBuffer : Disposable
     {
-        private readonly uint target;
-
         private uint buffer;
 
-        public DeviceBuffer(uint target)
+        internal uint BufferId
         {
-            this.target = target;
-            this.GenBuffers();
+            get;
+            private set;
         }
 
-        public void Bind()
+        internal uint Target
         {
-            NativeGl.glBindBuffer(this.target, this.buffer);
+            get;
+            private set;
+        }
+
+        internal DeviceBuffer(uint target)
+        {
+            this.Target = target;
+            this.Initialize();
         }
 
         public void BufferData<T>(int size, [In] T[] data, uint usage) where T : struct
         {
             GCHandle dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+
             try
             {
-                NativeGl.glBufferData(this.target, (IntPtr)size, dataHandle.AddrOfPinnedObject(), usage);
+                NativeGl.glBufferData(this.Target, (IntPtr)size, dataHandle.AddrOfPinnedObject(), usage);
             }
             finally
             {
                 dataHandle.Free();
             }
-        }
-
-        public void Unbind()
-        {
-            NativeGl.glBindBuffer(this.target, 0);
         }
 
         protected override void Dispose(bool disposing)
@@ -83,12 +84,12 @@ namespace Beerdriven.Mobile.Graphics.ES20
             base.Dispose(disposing);
         }
 
-        private void GenBuffers()
+        protected void Initialize()
         {
             uint[] bufferIds = new uint[1];
             NativeGl.glGenBuffers(1, bufferIds);
 
-            this.buffer = bufferIds[0];
+            this.BufferId = bufferIds[0];
         }
     }
 }

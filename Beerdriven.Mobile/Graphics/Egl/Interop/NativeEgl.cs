@@ -31,7 +31,7 @@ namespace Beerdriven.Mobile.Graphics.Egl.Interop
     using System;
     using System.Runtime.InteropServices;
 
-    public static class NativeEgl
+    internal static class NativeEgl
     {
         public const int EGL_ALPHA_FORMAT = EGL_VG_ALPHA_FORMAT;
 

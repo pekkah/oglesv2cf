@@ -43,8 +43,8 @@ namespace Beerdriven.Mobile.Graphics.ES20
 
         public ShaderProgram()
         {
-            this.Create();
             this.shaders = new List<Shader>();
+            this.Initialize();  
         }
 
         public IEnumerable<Shader> Shaders
@@ -55,7 +55,7 @@ namespace Beerdriven.Mobile.Graphics.ES20
             }
         }
 
-        protected uint ProgramPointer
+        internal uint ProgramId
         {
             get;
             private set;
@@ -63,14 +63,14 @@ namespace Beerdriven.Mobile.Graphics.ES20
 
         public void AttachShader(Shader shader)
         {
-            NativeGl.glAttachShader(this.ProgramPointer, shader.ShaderPointer);
+            NativeGl.glAttachShader(this.ProgramId, shader.ShaderId);
             this.shaders.Add(shader);
         }
 
         public uint GetAttribLocation(string name)
         {
             var pname = MarshalExtensions.StringToPtrAnsi(name);
-            var handle = NativeGl.glGetAttribLocation(this.ProgramPointer, pname);
+            var handle = NativeGl.glGetAttribLocation(this.ProgramId, pname);
             Marshal.FreeHGlobal(pname);
 
             return handle;
@@ -80,7 +80,7 @@ namespace Beerdriven.Mobile.Graphics.ES20
         {
             int length;
             var error = new char[MaxInfologLength];
-            NativeGl.glGetProgramInfoLog(this.ProgramPointer, MaxInfologLength, out length, error);
+            NativeGl.glGetProgramInfoLog(this.ProgramId, MaxInfologLength, out length, error);
 
             return StringExtensions.GetAnsiString(error, length);
         }
@@ -88,7 +88,7 @@ namespace Beerdriven.Mobile.Graphics.ES20
         public uint GetUniformLocation(string name)
         {
             var pname = MarshalExtensions.StringToPtrAnsi(name);
-            var handle = NativeGl.glGetUniformLocation(this.ProgramPointer, pname);
+            var handle = NativeGl.glGetUniformLocation(this.ProgramId, pname);
             Marshal.FreeHGlobal(pname);
 
             return handle;
@@ -98,14 +98,14 @@ namespace Beerdriven.Mobile.Graphics.ES20
         {
             this.OnBeforeLinked();
 
-            NativeGl.glLinkProgram(this.ProgramPointer);
+            NativeGl.glLinkProgram(this.ProgramId);
 
             var success = new[]
                               {
                                       -1
                               };
 
-            NativeGl.glGetProgramiv(this.ProgramPointer, NativeGl.GL_LINK_STATUS, success);
+            NativeGl.glGetProgramiv(this.ProgramId, NativeGl.GL_LINK_STATUS, success);
 
             var ok = success[0] == NativeGl.GL_TRUE;
 
@@ -115,11 +115,6 @@ namespace Beerdriven.Mobile.Graphics.ES20
             }
 
             return ok;
-        }
-
-        public void Quit()
-        {
-            NativeGl.glUseProgram(0);
         }
 
         public void UniformMatrix4Fv(uint location, int count, byte transpose, Matrix4 matrix)
@@ -133,7 +128,7 @@ namespace Beerdriven.Mobile.Graphics.ES20
 
         public void Use()
         {
-            NativeGl.glUseProgram(this.ProgramPointer);
+            NativeGl.glUseProgram(this.ProgramId);
         }
 
         protected virtual void OnBeforeLinked()
@@ -150,22 +145,22 @@ namespace Beerdriven.Mobile.Graphics.ES20
             {
                 foreach (var shader in this.shaders)
                 {
-                    NativeGl.glDetachShader(this.ProgramPointer, shader.ShaderPointer);
+                    NativeGl.glDetachShader(this.ProgramId, shader.ShaderId);
                     shader.Dispose();
                 }
             }
 
-            if (this.ProgramPointer != 0)
+            if (this.ProgramId != 0)
             {
-                NativeGl.glDeleteProgram(this.ProgramPointer);
+                NativeGl.glDeleteProgram(this.ProgramId);
             }
 
             base.Dispose(disposing);
         }
 
-        private void Create()
+        protected void Initialize()
         {
-            this.ProgramPointer = NativeGl.glCreateProgram();
+            this.ProgramId = NativeGl.glCreateProgram();
         }
     }
 }

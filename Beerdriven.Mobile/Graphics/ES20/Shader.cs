@@ -51,7 +51,7 @@ namespace Beerdriven.Mobile.Graphics.ES20
             private set;
         }
 
-        internal uint ShaderPointer
+        internal uint ShaderId
         {
             get;
             private set;
@@ -89,14 +89,14 @@ namespace Beerdriven.Mobile.Graphics.ES20
 
         public bool Compile()
         {
-            NativeGl.glCompileShader(this.ShaderPointer);
+            NativeGl.glCompileShader(this.ShaderId);
 
             var success = new[]
                               {
                                       -1
                               };
 
-            NativeGl.glGetShaderiv(this.ShaderPointer, NativeGl.GL_COMPILE_STATUS, success);
+            NativeGl.glGetShaderiv(this.ShaderId, NativeGl.GL_COMPILE_STATUS, success);
 
             return success[0] == NativeGl.GL_TRUE;
         }
@@ -105,7 +105,7 @@ namespace Beerdriven.Mobile.Graphics.ES20
         {
             int length;
             var error = new char[MaxInfologLength];
-            NativeGl.glGetShaderInfoLog(this.ShaderPointer, MaxInfologLength, out length, error);
+            NativeGl.glGetShaderInfoLog(this.ShaderId, MaxInfologLength, out length, error);
 
             return StringExtensions.GetAnsiString(error, length);
         }
@@ -120,16 +120,16 @@ namespace Beerdriven.Mobile.Graphics.ES20
                 IntPtr strPtr = MarshalExtensions.StringToPtrAnsi(source);
                 ptrArray[0] = strPtr;
 
-                NativeGl.glShaderSource(this.ShaderPointer, 1, ptrArray, &length);
+                NativeGl.glShaderSource(this.ShaderId, 1, ptrArray, &length);
                 Marshal.FreeHGlobal(strPtr);
             }
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (this.ShaderPointer != 0)
+            if (this.ShaderId != 0)
             {
-                NativeGl.glDeleteShader(this.ShaderPointer);
+                NativeGl.glDeleteShader(this.ShaderId);
             }
 
             base.Dispose(disposing);
@@ -137,7 +137,7 @@ namespace Beerdriven.Mobile.Graphics.ES20
 
         private void Create()
         {
-            this.ShaderPointer = NativeGl.glCreateShader(this.Type);
+            this.ShaderId = NativeGl.glCreateShader(this.Type);
         }
     }
 }

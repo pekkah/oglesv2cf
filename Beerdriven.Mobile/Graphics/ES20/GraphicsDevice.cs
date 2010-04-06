@@ -96,6 +96,21 @@ namespace Beerdriven.Mobile.Graphics.ES20
             return null;
         }
 
+        public DeviceBuffer CreateBuffer(uint target)
+        {
+            return new DeviceBuffer(target);
+        }
+
+        public void BindBuffer(DeviceBuffer buffer)
+        {
+            NativeGl.glBindBuffer(buffer.Target, buffer.BufferId);
+        }
+
+        public void UseProgram(ShaderProgram program)
+        {
+            NativeGl.glUseProgram(program.ProgramId);
+        }
+
         private void UpdateClearColor(Vector4 color)
         {
             NativeGl.glClearColor(color.X, color.Y, color.Z, color.W);
