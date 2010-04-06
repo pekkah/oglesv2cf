@@ -91,6 +91,11 @@ namespace Beerdriven.Mobile.Graphics.ES20
             NativeGl.glVertexAttribPointer(indx, size, type, normalized, stride, IntPtr.Zero);
         }
 
+        public IRenderingScope Begin()
+        {
+            return null;
+        }
+
         private void UpdateClearColor(Vector4 color)
         {
             NativeGl.glClearColor(color.X, color.Y, color.Z, color.W);

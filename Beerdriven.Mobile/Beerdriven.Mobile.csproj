@@ -79,6 +79,7 @@
     <Compile Include="Graphics\ES20\GraphicsDevice.cs" />
     <Compile Include="Graphics\IPlatformGraphicsManager.cs" />
     <Compile Include="Graphics\IDisplayManager.cs" />
+    <Compile Include="Graphics\IRenderingScope.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="Interop\NativeCore.cs" />
     <Compile Include="Interop\NativeMessage.cs" />

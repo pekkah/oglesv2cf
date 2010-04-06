@@ -106,6 +106,8 @@ namespace Beerdriven.Mobile.Graphics.Egl
         {
             if (this.isInitialized)
             {
+                NativeEgl.eglMakeCurrent(this.display.DisplayPointer, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+
                 if (NativeEgl.eglTerminate(this.display.DisplayPointer) == NativeEgl.EGL_FALSE)
                 {
                     throw new PlatformGraphicsException(

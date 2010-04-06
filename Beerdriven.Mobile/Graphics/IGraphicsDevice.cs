@@ -54,5 +54,7 @@ namespace Beerdriven.Mobile.Graphics
         void EnabledVertexAttribArray(uint indx);
 
         void VertexAttribPointer(uint indx, int size, uint type, byte normalized, int stride);
+
+        IRenderingScope Begin();
     }
 }
