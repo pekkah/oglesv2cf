@@ -26,12 +26,14 @@
 
 #endregion
 
-namespace Beerdriven.Mobile.Graphics
+namespace Beerdriven.Mobile.Graphics.ES20
 {
-    using System;
-    using ES20;
-
-    public interface IRenderingScope : IScopedOperations, IDisposable
+    public interface IScopedOperations
     {
+        void BindBuffer(DeviceBuffer buffer);
+
+        void EnableVertexAttribArray(uint index);
+
+        void UseProgram(ShaderProgram program);
     }
 }

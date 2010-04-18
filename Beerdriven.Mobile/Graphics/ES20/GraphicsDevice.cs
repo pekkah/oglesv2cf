@@ -33,7 +33,7 @@ namespace Beerdriven.Mobile.Graphics.ES20
     using Interop;
     using OpenTK;
 
-    public class GraphicsDevice : IGraphicsDevice
+    public class GraphicsDevice : IGraphicsDevice, IScopedOperations
     {
         private Vector4 clearColor;
 
@@ -71,34 +71,9 @@ namespace Beerdriven.Mobile.Graphics.ES20
             }
         }
 
-        public void Clear(uint mask)
-        {
-            NativeGl.glClear(mask);
-        }
-
-        public void DrawElements(uint mode, int count, uint type)
-        {
-            NativeGl.glDrawElements(mode, count, type, IntPtr.Zero);
-        }
-
-        public void EnabledVertexAttribArray(uint index)
-        {
-            NativeGl.glEnableVertexAttribArray(index);
-        }
-
-        public void VertexAttribPointer(uint indx, int size, uint type, byte normalized, int stride)
-        {
-            NativeGl.glVertexAttribPointer(indx, size, type, normalized, stride, IntPtr.Zero);
-        }
-
         public IRenderingScope Begin()
         {
-            return null;
-        }
-
-        public DeviceBuffer CreateBuffer(uint target)
-        {
-            return new DeviceBuffer(target);
+            return new RenderingScope(this);
         }
 
         public void BindBuffer(DeviceBuffer buffer)
@@ -106,9 +81,59 @@ namespace Beerdriven.Mobile.Graphics.ES20
             NativeGl.glBindBuffer(buffer.Target, buffer.BufferId);
         }
 
+        public void Clear(uint mask)
+        {
+            NativeGl.glClear(mask);
+        }
+
+        public DeviceBuffer CreateBuffer(uint target)
+        {
+            return new DeviceBuffer(target);
+        }
+
+        public void DisableBuffer(uint target)
+        {
+            NativeGl.glBindBuffer(target, 0);
+        }
+
+        public void DisableProgram()
+        {
+            NativeGl.glUseProgram(0);
+        }
+
+        public void DisableVertexAttribArray(uint indx)
+        {
+            NativeGl.glDisableVertexAttribArray(indx);
+        }
+
+        public void DrawArrays(uint mode, int first, int count)
+        {
+            NativeGl.glDrawArrays(mode, first, count);
+        }
+
+        public void DrawElements(uint mode, int count, uint type)
+        {
+            NativeGl.glDrawElements(mode, count, type, IntPtr.Zero);
+        }
+
+        public void EnableVertexAttribArray(uint index)
+        {
+            NativeGl.glEnableVertexAttribArray(index);
+        }
+
         public void UseProgram(ShaderProgram program)
         {
             NativeGl.glUseProgram(program.ProgramId);
+        }
+
+        public void VertexAttribPointer(uint indx, int size, uint type, byte normalized, int stride)
+        {
+            NativeGl.glVertexAttribPointer(indx, size, type, normalized, stride, IntPtr.Zero);
+        }
+
+        public void VertexAttribPointer(uint indx, int size, uint type, byte normalized, int stride, IntPtr ptr)
+        {
+            NativeGl.glVertexAttribPointer(indx, size, type, normalized, stride, ptr);
         }
 
         private void UpdateClearColor(Vector4 color)

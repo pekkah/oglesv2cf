@@ -74,6 +74,9 @@
     <Compile Include="Vertex.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Textures\texture01.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="FragmentShader.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

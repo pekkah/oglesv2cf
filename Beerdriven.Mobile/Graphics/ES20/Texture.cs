@@ -26,12 +26,42 @@
 
 #endregion
 
-namespace Beerdriven.Mobile.Graphics
+namespace Beerdriven.Mobile.Graphics.ES20
 {
-    using System;
-    using ES20;
+    using Interop;
+    using OpenGLESv2;
 
-    public interface IRenderingScope : IScopedOperations, IDisposable
+    public class Texture : Disposable
     {
+        internal Texture(uint target, uint textureId)
+        {
+            this.Target = target;
+            this.TextureId = textureId;
+        }
+
+        public uint TextureId
+        {
+            get;
+            private set;
+        }
+
+        internal uint Target
+        {
+            get;
+            private set;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (this.TextureId != 0)
+            {
+                var textures = new uint[1];
+                textures[0] = this.TextureId;
+
+                NativeGl.glDeleteTextures(1, textures);
+            }
+
+            base.Dispose(disposing);
+        }
     }
 }

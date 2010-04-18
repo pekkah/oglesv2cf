@@ -257,19 +257,18 @@ namespace Beerdriven.Mobile.Gaming
             while (!NativeCore.PeekMessage(out this.message, IntPtr.Zero, 0, 0, 0))
             {
                 NativeCore.QueryPerformanceCounter(ref this.updateEndCount);
-                NativeCore.QueryPerformanceCounter(ref this.renderEndCount);
-
                 this.updateDeltaCount = this.updateEndCount - this.updateStartCount;
                 this.updateDeltaSeconds = this.updateDeltaCount / (double)this.counterFrequency;
-
-                this.renderDeltaCount = this.renderEndCount - this.renderStartCount;
-                this.renderDeltaSeconds = this.renderDeltaCount / (double)this.counterFrequency;
 
                 if (this.updateDeltaSeconds >= this.requestedUpdateDelta)
                 {
                     this.Update(this.updateDeltaSeconds);
                     NativeCore.QueryPerformanceCounter(ref this.updateStartCount);
                 }
+
+                NativeCore.QueryPerformanceCounter(ref this.renderEndCount);
+                this.renderDeltaCount = this.renderEndCount - this.renderStartCount;
+                this.renderDeltaSeconds = this.renderDeltaCount / (double)this.counterFrequency;
 
                 if (this.renderDeltaSeconds >= this.requestedRenderDelta)
                 {

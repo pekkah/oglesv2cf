@@ -1,19 +1,44 @@
 ﻿namespace SampleApp
 {
-    using System;
     using Beerdriven.Mobile.Graphics.ES20;
-    using Beerdriven.Mobile.Graphics.ES20.Interop;
-    using OpenTK;
 
     public class SampleShader : ShaderProgram
     {
-        public uint PositionHandle;
+        public uint BaseTexture
+        {
+            get;
+            set;
+        }
 
-        public uint ViewHandle;
+        public MatrixVariable Projection
+        {
+            get;
+            private set;
+        }
 
-        public uint ProjectionHandle;
+        public AttributeVariable TexCoord
+        {
+            get;
+            private set;
+        }
 
-        public uint WorldHandle;
+        public AttributeVariable Vertex
+        {
+            get;
+            private set;
+        }
+
+        public MatrixVariable View
+        {
+            get;
+            private set;
+        }
+
+        public MatrixVariable World
+        {
+            get;
+            private set;
+        }
 
         protected override void OnBeforeLinked()
         {
@@ -21,10 +46,14 @@
 
         protected override void OnLinked()
         {
-            this.PositionHandle = this.GetAttribLocation("inPosition");
-            this.ViewHandle = this.GetUniformLocation("inViewMatrix");
-            this.ProjectionHandle = this.GetUniformLocation("inProjMatrix");
-            this.WorldHandle = this.GetUniformLocation("inWorldMatrix");
+            this.World = new MatrixVariable(this, "u_world");
+            this.View = new MatrixVariable(this, "u_view");
+            this.Projection = new MatrixVariable(this, "u_projection");
+
+            this.Vertex = new AttributeVariable(this, "a_vertex");
+            this.TexCoord = new AttributeVariable(this, "a_texcoord");
+
+            this.BaseTexture = this.GetUniformLocation("t_base");
         }
     }
 }

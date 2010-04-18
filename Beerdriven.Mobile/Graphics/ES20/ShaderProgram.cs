@@ -44,7 +44,7 @@ namespace Beerdriven.Mobile.Graphics.ES20
         public ShaderProgram()
         {
             this.shaders = new List<Shader>();
-            this.Initialize();  
+            this.Initialize();
         }
 
         public IEnumerable<Shader> Shaders
@@ -124,11 +124,6 @@ namespace Beerdriven.Mobile.Graphics.ES20
                 float* matrixPtr = &matrix.Row0.X;
                 NativeGl.glUniformMatrix4fv(location, count, transpose, matrixPtr);
             }
-        }
-
-        public void Use()
-        {
-            NativeGl.glUseProgram(this.ProgramId);
         }
 
         protected virtual void OnBeforeLinked()

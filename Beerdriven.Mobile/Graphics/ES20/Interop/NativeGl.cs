@@ -795,7 +795,7 @@ namespace Beerdriven.Mobile.Graphics.ES20.Interop
         public static extern void glDeleteShader(uint shader);
 
         [DllImport(gl2LibraryName)]
-        public static extern void glDeleteTextures(int n, ref uint[] textures);
+        public static extern void glDeleteTextures(int n, uint[] textures);
 
         [DllImport(gl2LibraryName)]
         public static extern void glDepthFunc(uint func);
@@ -856,7 +856,7 @@ namespace Beerdriven.Mobile.Graphics.ES20.Interop
         public static extern unsafe void glGenRenderbuffers(int n, uint* renderbuffers);
 
         [DllImport(gl2LibraryName)]
-        public static extern unsafe void glGenTextures(int n, uint* textures);
+        public static extern unsafe void glGenTextures(int n, uint[] textures);
 
         [DllImport(gl2LibraryName)]
         public static extern void glGenerateMipmap(uint target);

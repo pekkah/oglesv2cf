@@ -28,6 +28,7 @@
 
 namespace Beerdriven.Mobile.Graphics
 {
+    using System;
     using System.Drawing;
     using ES20;
     using OpenTK;
@@ -48,20 +49,30 @@ namespace Beerdriven.Mobile.Graphics
             set;
         }
 
-        void Clear(uint mask);
-
-        void DrawElements(uint mode, int count, uint type);
-
-        void EnabledVertexAttribArray(uint indx);
-
-        void VertexAttribPointer(uint indx, int size, uint type, byte normalized, int stride);
-
         IRenderingScope Begin();
+
+        void BindBuffer(DeviceBuffer buffer);
+
+        void Clear(uint mask);
 
         DeviceBuffer CreateBuffer(uint target);
 
+        void DisableBuffer(uint target);
+
+        void DisableProgram();
+
+        void DisableVertexAttribArray(uint indx);
+
+        void DrawArrays(uint mode, int first, int count);
+
+        void DrawElements(uint mode, int count, uint type);
+
+        void EnableVertexAttribArray(uint indx);
+
         void UseProgram(ShaderProgram program);
 
-        void BindBuffer(DeviceBuffer buffer);
+        void VertexAttribPointer(uint indx, int size, uint type, byte normalized, int stride);
+
+        void VertexAttribPointer(uint indx, int size, uint type, byte normalized, int stride, IntPtr ptr);
     }
 }

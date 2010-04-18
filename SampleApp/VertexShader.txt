@@ -1,10 +1,15 @@
-uniform mat4 inProjMatrix;
-uniform mat4 inViewMatrix;
-uniform mat4 inWorldMatrix;
-attribute vec4 inPosition;
+uniform mat4 u_world;
+uniform mat4 u_view;
+uniform mat4 u_projection;
+
+attribute vec4 a_vertex;
+attribute vec2 a_texcoord;
+
+varying vec2 v_texcoord;
 
 void main()
 {
-   gl_Position = inProjMatrix * inWorldMatrix * inViewMatrix * inPosition;
+	v_texcoord = a_texcoord;
+	mat4 modelView = u_world * u_view;
+	gl_Position = u_projection * modelView * a_vertex;
 }
-

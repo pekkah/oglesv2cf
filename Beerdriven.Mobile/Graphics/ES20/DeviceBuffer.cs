@@ -37,6 +37,12 @@ namespace Beerdriven.Mobile.Graphics.ES20
     {
         private uint buffer;
 
+        internal DeviceBuffer(uint target)
+        {
+            this.Target = target;
+            this.Initialize();
+        }
+
         internal uint BufferId
         {
             get;
@@ -47,12 +53,6 @@ namespace Beerdriven.Mobile.Graphics.ES20
         {
             get;
             private set;
-        }
-
-        internal DeviceBuffer(uint target)
-        {
-            this.Target = target;
-            this.Initialize();
         }
 
         public void BufferData<T>(int size, [In] T[] data, uint usage) where T : struct

@@ -26,12 +26,20 @@
 
 #endregion
 
-namespace Beerdriven.Mobile.Graphics
+namespace Beerdriven.Mobile.Graphics.ES20
 {
-    using System;
-    using ES20;
-
-    public interface IRenderingScope : IScopedOperations, IDisposable
+    public interface IShaderVariable<TValue>
     {
+        uint Location
+        {
+            get;
+        }
+
+        string Name
+        {
+            get;
+        }
+
+        void SetValue(TValue value);
     }
 }

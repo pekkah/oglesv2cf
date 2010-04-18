@@ -26,12 +26,36 @@
 
 #endregion
 
-namespace Beerdriven.Mobile.Graphics
+namespace Beerdriven.Mobile.Graphics.ES20
 {
-    using System;
-    using ES20;
+    using OpenTK;
 
-    public interface IRenderingScope : IScopedOperations, IDisposable
+    public class MatrixVariable : IShaderVariable<Matrix4>
     {
+        private readonly ShaderProgram program;
+
+        public MatrixVariable(ShaderProgram program, string name)
+        {
+            this.program = program;
+            this.Name = name;
+            this.Location = this.program.GetUniformLocation(name);
+        }
+
+        public uint Location
+        {
+            get;
+            private set;
+        }
+
+        public string Name
+        {
+            get;
+            private set;
+        }
+
+        public void SetValue(Matrix4 value)
+        {
+            this.program.UniformMatrix4Fv(this.Location, 1, 0, value);
+        }
     }
 }
