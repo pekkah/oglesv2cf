@@ -63,6 +63,7 @@
     <Compile Include="Disposable.cs" />
     <Compile Include="Gaming\Game.cs" />
     <Compile Include="Graphics\Egl\DisplayManager.cs" />
+    <Compile Include="Graphics\Egl\Enums\Api.cs" />
     <Compile Include="Graphics\Egl\Enums\Boolean.cs" />
     <Compile Include="Graphics\Egl\Enums\ContextVersion.cs" />
     <Compile Include="Graphics\Egl\Enums\ConfigAttributes.cs" />

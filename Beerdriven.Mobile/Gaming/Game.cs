@@ -156,7 +156,7 @@ namespace Beerdriven.Mobile.Gaming
 
                 this.PlatformManager = new PlatformGraphicsManager(this.DisplayManager.GetDisplay(this.RenderingWindow));
 
-                this.PlatformManager.BindApi(NativeEgl.EGL_OPENGL_ES_API);
+                this.PlatformManager.BindApi(Api.EGL_OPENGL_ES_API);
 
                 var attribs = new Attribs<ConfigAttributes>();
 

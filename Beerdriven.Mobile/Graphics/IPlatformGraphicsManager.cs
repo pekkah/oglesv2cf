@@ -35,7 +35,7 @@ namespace Beerdriven.Mobile.Graphics
 
     public interface IPlatformGraphicsManager
     {
-        void BindApi(uint api);
+        void BindApi(Api api);
 
         IEnumerable<Config> ChooseConfigs(Attribs<ConfigAttributes> attribs, int numberOfConfigsToReturn);
 

@@ -56,9 +56,9 @@ namespace Beerdriven.Mobile.Graphics.Egl
             protected set;
         }
 
-        public void BindApi(uint api)
+        public void BindApi(Api api)
         {
-            NativeEgl.eglBindAPI(api);
+            NativeEgl.eglBindAPI((uint)api);
         }
 
         public IEnumerable<Config> ChooseConfigs(Attribs<ConfigAttributes> attribs, int numberOfConfigsToReturn)
