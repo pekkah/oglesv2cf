@@ -47,7 +47,7 @@ namespace Beerdriven.Mobile.Gaming
     {
         public Matrix4 Projection;
 
-        public Matrix4 View;
+        // public Matrix4 View;
 
         public Matrix4 World;
 
@@ -178,7 +178,7 @@ namespace Beerdriven.Mobile.Gaming
                 // graphics device setup
                 this.GraphicsDevice = new GraphicsDevice
                                           {
-                                                  ClearColor = new Vector4(0, 0, 0, 1f),
+                                                  ClearColor = new Vector4(1, 1, 1, 1f),
                                                   Viewport = new Rectangle(
                                                       0, 
                                                       0, 

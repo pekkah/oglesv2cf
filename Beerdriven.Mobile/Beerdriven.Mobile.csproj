@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="Disposable.cs" />
     <Compile Include="Gaming\Game.cs" />
+    <Compile Include="Graphics\3D\Camera.cs" />
     <Compile Include="Graphics\Egl\DisplayManager.cs" />
     <Compile Include="Graphics\Egl\Enums\Api.cs" />
     <Compile Include="Graphics\Egl\Enums\Boolean.cs" />
@@ -76,13 +77,17 @@
     <Compile Include="Graphics\Egl\Surface.cs" />
     <Compile Include="Graphics\Egl\WindowSurface.cs" />
     <Compile Include="Graphics\ES20\DeviceBuffer.cs" />
-    <Compile Include="Graphics\ES20\AttributeVariable.cs" />
+    <Compile Include="Graphics\ES20\Attribute.cs" />
+    <Compile Include="Graphics\ES20\Enums\TextureTarget.cs" />
+    <Compile Include="Graphics\ES20\Enums\TextureUnit.cs" />
     <Compile Include="Graphics\ES20\GraphicsDeviceException.cs" />
     <Compile Include="Graphics\ES20\IScopedOperations.cs" />
     <Compile Include="Graphics\ES20\IShaderVariable.cs" />
-    <Compile Include="Graphics\ES20\MatrixVariable.cs" />
+    <Compile Include="Graphics\ES20\MatrixUniform.cs" />
     <Compile Include="Graphics\ES20\Texture.cs" />
     <Compile Include="Graphics\ES20\TextureFactory.cs" />
+    <Compile Include="Graphics\ES20\TextureUniform.cs" />
+    <Compile Include="Graphics\ES20\UniformVariable.cs" />
     <Compile Include="Graphics\IGraphicsDevice.cs" />
     <Compile Include="Graphics\ES20\Shader.cs" />
     <Compile Include="Graphics\ES20\ShaderProgram.cs" />
@@ -121,6 +126,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Graphics\3D\Modelling\" />
     <Folder Include="Graphics\Imaging\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CompactFramework.CSharp.targets" />

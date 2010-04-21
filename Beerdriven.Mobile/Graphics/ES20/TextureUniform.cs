@@ -26,60 +26,25 @@
 
 #endregion
 
-namespace Beerdriven.Mobile.Graphics
+namespace Beerdriven.Mobile.Graphics.ES20
 {
     using System;
-    using System.Drawing;
-    using ES20;
-    using ES20.Enums;
-    using OpenTK;
+    using Interop;
 
-    public interface IGraphicsDevice
+    public class TextureUniform : UniformVariable<Texture>
     {
-        Vector4 ClearColor
+        public TextureUniform(ShaderProgram program, string name) : base(program, name)
         {
-            get;
-
-            set;
         }
 
-        Rectangle Viewport
+        public virtual void SetValue(Texture value, uint unitNumber)
         {
-            get;
-
-            set;
+            NativeGl.glUniform1i((int)this.Location, (int)unitNumber);
         }
 
-        IRenderingScope Begin();
-
-        void BindBuffer(DeviceBuffer buffer);
-
-        void Clear(uint mask);
-
-        DeviceBuffer CreateBuffer(uint target);
-
-        void DisableBuffer(uint target);
-
-        void DisableProgram();
-
-        void DisableVertexAttribArray(uint indx);
-
-        void DrawArrays(uint mode, int first, int count);
-
-        void DrawElements(uint mode, int count, uint type);
-
-        void EnableVertexAttribArray(uint indx);
-
-        void UseProgram(ShaderProgram program);
-
-        void VertexAttribPointer(uint indx, int size, uint type, byte normalized, int stride);
-
-        void VertexAttribPointer(uint indx, int size, uint type, byte normalized, int stride, IntPtr ptr);
-
-        void ActivateTextureUnit(TextureUnit textureUnit);
-
-        void BindTexture(TextureTarget textureTarget, uint textureName);
-
-        void Enable(uint cap);
+        public override void SetValue(Texture value)
+        {
+            throw new NotSupportedException("User SetValue(value, unitNumber) instead.");
+        }
     }
 }

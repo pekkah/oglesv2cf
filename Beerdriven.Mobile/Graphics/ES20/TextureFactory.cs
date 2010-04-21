@@ -91,6 +91,8 @@ namespace Beerdriven.Mobile.Graphics.ES20
                 handle.Free();
             }
 
+            NativeGl.glBindTexture(NativeGl.GL_TEXTURE_2D, 0);
+
             var texture = new Texture(NativeGl.GL_TEXTURE_2D, textureId);
             return texture;
         }

@@ -26,60 +26,36 @@
 
 #endregion
 
-namespace Beerdriven.Mobile.Graphics
+namespace Beerdriven.Mobile.Graphics.ES20
 {
     using System;
-    using System.Drawing;
-    using ES20;
-    using ES20.Enums;
-    using OpenTK;
 
-    public interface IGraphicsDevice
+    public class Attribute : IShaderVariable<uint>
     {
-        Vector4 ClearColor
-        {
-            get;
+        private readonly ShaderProgram program;
 
-            set;
+        public Attribute(ShaderProgram program, string name)
+        {
+            this.program = program;
+            this.Name = name;
+            this.Location = this.program.GetAttribLocation(name);
         }
 
-        Rectangle Viewport
+        public uint Location
         {
             get;
-
-            set;
+            private set;
         }
 
-        IRenderingScope Begin();
+        public string Name
+        {
+            get;
+            private set;
+        }
 
-        void BindBuffer(DeviceBuffer buffer);
-
-        void Clear(uint mask);
-
-        DeviceBuffer CreateBuffer(uint target);
-
-        void DisableBuffer(uint target);
-
-        void DisableProgram();
-
-        void DisableVertexAttribArray(uint indx);
-
-        void DrawArrays(uint mode, int first, int count);
-
-        void DrawElements(uint mode, int count, uint type);
-
-        void EnableVertexAttribArray(uint indx);
-
-        void UseProgram(ShaderProgram program);
-
-        void VertexAttribPointer(uint indx, int size, uint type, byte normalized, int stride);
-
-        void VertexAttribPointer(uint indx, int size, uint type, byte normalized, int stride, IntPtr ptr);
-
-        void ActivateTextureUnit(TextureUnit textureUnit);
-
-        void BindTexture(TextureTarget textureTarget, uint textureName);
-
-        void Enable(uint cap);
+        public void SetValue(uint value)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

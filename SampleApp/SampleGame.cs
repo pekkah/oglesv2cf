@@ -6,9 +6,11 @@
     using System.Runtime.InteropServices;
     using System.Windows.Forms;
     using Beerdriven.Mobile.Gaming;
+    using Beerdriven.Mobile.Graphics._3D.Modelling;
     using Beerdriven.Mobile.Graphics.Egl;
     using Beerdriven.Mobile.Graphics.Egl.Enums;
     using Beerdriven.Mobile.Graphics.ES20;
+    using Beerdriven.Mobile.Graphics.ES20.Enums;
     using Beerdriven.Mobile.Graphics.ES20.Interop;
     using Beerdriven.Mobile.Interop;
     using OpenTK;
@@ -16,8 +18,6 @@
     public class SampleGame : Game
     {
         private int exitCounter;
-
-        private Matrix4 modelViewProj;
 
         private float rotationAngle;
 
@@ -46,6 +46,8 @@
             get;
             private set;
         }
+
+        protected Camera Camera;
 
         protected override void Dispose(bool disposing)
         {
@@ -165,31 +167,33 @@
                 // use the shader);));
                 this.GraphicsDevice.UseProgram(this.ShaderProgram);
 
-                // load texture
-                this.TextureFactory = new TextureFactory(this.GraphicsDevice);
-                this.texture =
-                        this.TextureFactory.CreateFromFile(
-                                Path.Combine(currentDirectory, @"Content\Textures\texture01.jpg"));
-
                 // our camera matrix);)
-                this.View = Matrix4.LookAt(0, 0, 5, 0, 0, 0, 0, 1, 0);
+                // this.View = Matrix4.LookAt(0, 0, 5, 0, 0, 0, 0, 1, 0);
+                this.Camera = new Camera(new Vector3(-4, 1.5f, -4), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
 
+                this.Camera.Rotate(0, 0, 0);
+                
                 // projection matrix
                 var fovy = this.RenderingWindow.Width / (float)this.RenderingWindow.Height;
                 this.Projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45), fovy, 1, 100);
 
                 // world matrix
-                this.World = Matrix4.CreateTranslation(0, -2, 0);
+                this.World = Matrix4.CreateTranslation(0, -1, 0);
 
-                NativeGl.glActiveTexture(NativeGl.GL_TEXTURE0);
-                NativeGl.glBindTexture(NativeGl.GL_TEXTURE_2D, this.texture.TextureId);
-                NativeGl.glUniform1i((int)this.ShaderProgram.BaseTexture, 0);
+                // load texture
+                this.TextureFactory = new TextureFactory(this.GraphicsDevice);
+                this.texture = this.TextureFactory.CreateFromFile(Path.Combine(currentDirectory, @"Content\Textures\texture01.jpg"));
 
+                this.GraphicsDevice.ActivateTextureUnit(TextureUnit.GL_TEXTURE1);
+                this.GraphicsDevice.BindTexture(TextureTarget.GL_TEXTURE_2D, this.texture.TextureName);
+
+                // set initial shader values
+                this.ShaderProgram.BaseTexture.SetValue(this.texture, 1); // TextureUnit.GL_TEXTURE1
                 this.ShaderProgram.World.SetValue(this.World);
-                this.ShaderProgram.View.SetValue(this.View);
+                this.ShaderProgram.View.SetValue(this.Camera.View);
                 this.ShaderProgram.Projection.SetValue(this.Projection);
 
-                NativeGl.glEnable(NativeGl.GL_CULL_FACE);
+                this.GraphicsDevice.Enable(NativeGl.GL_CULL_FACE);
             }
             catch (Exception x)
             {

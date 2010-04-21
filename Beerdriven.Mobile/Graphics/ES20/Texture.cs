@@ -36,10 +36,10 @@ namespace Beerdriven.Mobile.Graphics.ES20
         internal Texture(uint target, uint textureId)
         {
             this.Target = target;
-            this.TextureId = textureId;
+            this.TextureName = textureId;
         }
 
-        public uint TextureId
+        public uint TextureName
         {
             get;
             private set;
@@ -53,10 +53,10 @@ namespace Beerdriven.Mobile.Graphics.ES20
 
         protected override void Dispose(bool disposing)
         {
-            if (this.TextureId != 0)
+            if (this.TextureName != 0)
             {
                 var textures = new uint[1];
-                textures[0] = this.TextureId;
+                textures[0] = this.TextureName;
 
                 NativeGl.glDeleteTextures(1, textures);
             }

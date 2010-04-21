@@ -30,32 +30,15 @@ namespace Beerdriven.Mobile.Graphics.ES20
 {
     using OpenTK;
 
-    public class MatrixVariable : IShaderVariable<Matrix4>
+    public class MatrixUniform : UniformVariable<Matrix4>
     {
-        private readonly ShaderProgram program;
-
-        public MatrixVariable(ShaderProgram program, string name)
+        public MatrixUniform(ShaderProgram program, string name) : base(program, name)
         {
-            this.program = program;
-            this.Name = name;
-            this.Location = this.program.GetUniformLocation(name);
         }
 
-        public uint Location
+        public override void SetValue(Matrix4 value)
         {
-            get;
-            private set;
-        }
-
-        public string Name
-        {
-            get;
-            private set;
-        }
-
-        public void SetValue(Matrix4 value)
-        {
-            this.program.UniformMatrix4Fv(this.Location, 1, 0, value);
+            this.Program.UniformMatrix4Fv(this.Location, 1, 0, value);
         }
     }
 }

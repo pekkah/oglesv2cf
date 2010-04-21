@@ -30,6 +30,7 @@ namespace Beerdriven.Mobile.Graphics.ES20
 {
     using System;
     using System.Drawing;
+    using Enums;
     using Interop;
     using OpenTK;
 
@@ -71,6 +72,11 @@ namespace Beerdriven.Mobile.Graphics.ES20
             }
         }
 
+        public void ActivateTextureUnit(TextureUnit textureUnit)
+        {
+            NativeGl.glActiveTexture((uint)textureUnit);
+        }
+
         public IRenderingScope Begin()
         {
             return new RenderingScope(this);
@@ -79,6 +85,11 @@ namespace Beerdriven.Mobile.Graphics.ES20
         public void BindBuffer(DeviceBuffer buffer)
         {
             NativeGl.glBindBuffer(buffer.Target, buffer.BufferId);
+        }
+
+        public void BindTexture(TextureTarget textureTarget, uint textureName)
+        {
+            NativeGl.glBindTexture((uint)textureTarget, textureName);
         }
 
         public void Clear(uint mask)
@@ -114,6 +125,11 @@ namespace Beerdriven.Mobile.Graphics.ES20
         public void DrawElements(uint mode, int count, uint type)
         {
             NativeGl.glDrawElements(mode, count, type, IntPtr.Zero);
+        }
+
+        public void Enable(uint cap)
+        {
+            NativeGl.glEnable(cap);
         }
 
         public void EnableVertexAttribArray(uint index)

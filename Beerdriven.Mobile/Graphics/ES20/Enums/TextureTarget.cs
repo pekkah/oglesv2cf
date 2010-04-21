@@ -26,36 +26,12 @@
 
 #endregion
 
-namespace Beerdriven.Mobile.Graphics.ES20
+namespace Beerdriven.Mobile.Graphics.ES20.Enums
 {
-    using System;
+    using Interop;
 
-    public class AttributeVariable : IShaderVariable<uint>
+    public enum TextureTarget
     {
-        private readonly ShaderProgram program;
-
-        public AttributeVariable(ShaderProgram program, string name)
-        {
-            this.program = program;
-            this.Name = name;
-            this.Location = this.program.GetAttribLocation(name);
-        }
-
-        public uint Location
-        {
-            get;
-            private set;
-        }
-
-        public string Name
-        {
-            get;
-            private set;
-        }
-
-        public void SetValue(uint value)
-        {
-            throw new NotImplementedException();
-        }
+        GL_TEXTURE_2D = NativeGl.GL_TEXTURE_2D
     }
 }
