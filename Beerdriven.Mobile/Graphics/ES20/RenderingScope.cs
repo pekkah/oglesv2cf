@@ -114,7 +114,7 @@ namespace Beerdriven.Mobile.Graphics.ES20
 
         private void TrackBoundBuffer(DeviceBuffer buffer)
         {
-            this.enabledBufferTargets.Add(buffer.Target);
+            this.enabledBufferTargets.Add((uint)buffer.Target);
         }
 
         private void TrackEnableVertexAttribArray(uint index)

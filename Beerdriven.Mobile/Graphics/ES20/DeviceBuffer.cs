@@ -30,14 +30,13 @@ namespace Beerdriven.Mobile.Graphics.ES20
 {
     using System;
     using System.Runtime.InteropServices;
+    using Enums;
     using Interop;
     using OpenGLESv2;
 
     public class DeviceBuffer : Disposable
     {
-        private uint buffer;
-
-        internal DeviceBuffer(uint target)
+        internal DeviceBuffer(BufferTarget target)
         {
             this.Target = target;
             this.Initialize();
@@ -49,19 +48,19 @@ namespace Beerdriven.Mobile.Graphics.ES20
             private set;
         }
 
-        internal uint Target
+        internal BufferTarget Target
         {
             get;
             private set;
         }
 
-        public void BufferData<T>(int size, [In] T[] data, uint usage) where T : struct
+        public void BufferData<T>(int size, [In] T[] data, BufferUsage usage) where T : struct
         {
             GCHandle dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
 
             try
             {
-                NativeGl.glBufferData(this.Target, (IntPtr)size, dataHandle.AddrOfPinnedObject(), usage);
+                NativeGl.glBufferData((uint)this.Target, (IntPtr)size, dataHandle.AddrOfPinnedObject(), (uint)usage);
             }
             finally
             {
@@ -71,13 +70,13 @@ namespace Beerdriven.Mobile.Graphics.ES20
 
         protected override void Dispose(bool disposing)
         {
-            if (this.buffer > 0)
+            if (this.BufferId > 0)
             {
                 NativeGl.glDeleteBuffers(
                         1,
                         new[]
                             {
-                                    this.buffer
+                                    this.BufferId
                             });
             }
 

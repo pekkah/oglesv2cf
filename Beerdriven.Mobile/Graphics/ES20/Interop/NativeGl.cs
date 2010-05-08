@@ -32,7 +32,7 @@ namespace Beerdriven.Mobile.Graphics.ES20.Interop
     using System.Runtime.InteropServices;
     using System.Text;
 
-    public static class NativeGl
+    internal static class NativeGl
     {
         public const int GL_ACTIVE_ATTRIBUTES = 0x8B89;
 

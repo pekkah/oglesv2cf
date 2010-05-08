@@ -84,22 +84,17 @@ namespace Beerdriven.Mobile.Graphics.ES20
 
         public void BindBuffer(DeviceBuffer buffer)
         {
-            NativeGl.glBindBuffer(buffer.Target, buffer.BufferId);
+            NativeGl.glBindBuffer((uint)buffer.Target, buffer.BufferId);
+        }
+
+        public void Clear(ClearMask mask)
+        {
+            NativeGl.glClear((uint)mask);
         }
 
         public void BindTexture(TextureTarget textureTarget, uint textureName)
         {
             NativeGl.glBindTexture((uint)textureTarget, textureName);
-        }
-
-        public void Clear(uint mask)
-        {
-            NativeGl.glClear(mask);
-        }
-
-        public DeviceBuffer CreateBuffer(uint target)
-        {
-            return new DeviceBuffer(target);
         }
 
         public void DisableBuffer(uint target)
@@ -117,19 +112,24 @@ namespace Beerdriven.Mobile.Graphics.ES20
             NativeGl.glDisableVertexAttribArray(indx);
         }
 
-        public void DrawArrays(uint mode, int first, int count)
+        public void DrawArrays(PrimitiveType mode, int first, int count)
         {
-            NativeGl.glDrawArrays(mode, first, count);
+            NativeGl.glDrawArrays((uint)mode, first, count);
         }
 
-        public void DrawElements(uint mode, int count, uint type)
+        public void DrawElements(PrimitiveType mode, int count, uint type)
         {
-            NativeGl.glDrawElements(mode, count, type, IntPtr.Zero);
+            NativeGl.glDrawElements((uint)mode, count, type, IntPtr.Zero);
         }
 
-        public void Enable(uint cap)
+        public void Enable(Cap cap)
         {
-            NativeGl.glEnable(cap);
+            NativeGl.glEnable((uint)cap);
+        }
+
+        public void Disable(Cap cap)
+        {
+            NativeGl.glDisable((uint)cap);
         }
 
         public void EnableVertexAttribArray(uint index)
@@ -142,14 +142,14 @@ namespace Beerdriven.Mobile.Graphics.ES20
             NativeGl.glUseProgram(program.ProgramId);
         }
 
-        public void VertexAttribPointer(uint indx, int size, uint type, byte normalized, int stride)
+        public void VertexAttribPointer(uint indx, int size, GlType type, GlBoolean normalized, int stride)
         {
-            NativeGl.glVertexAttribPointer(indx, size, type, normalized, stride, IntPtr.Zero);
+            this.VertexAttribPointer(indx, size, type, normalized, stride, IntPtr.Zero);
         }
 
-        public void VertexAttribPointer(uint indx, int size, uint type, byte normalized, int stride, IntPtr ptr)
+        public void VertexAttribPointer(uint indx, int size, GlType type, GlBoolean normalized, int stride, IntPtr ptr)
         {
-            NativeGl.glVertexAttribPointer(indx, size, type, normalized, stride, ptr);
+            NativeGl.glVertexAttribPointer(indx, size, (uint)type, (byte)normalized, stride, ptr);
         }
 
         private void UpdateClearColor(Vector4 color)

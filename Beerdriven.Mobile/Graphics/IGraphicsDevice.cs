@@ -54,9 +54,7 @@ namespace Beerdriven.Mobile.Graphics
 
         void BindBuffer(DeviceBuffer buffer);
 
-        void Clear(uint mask);
-
-        DeviceBuffer CreateBuffer(uint target);
+        void Clear(ClearMask mask);
 
         void DisableBuffer(uint target);
 
@@ -64,22 +62,24 @@ namespace Beerdriven.Mobile.Graphics
 
         void DisableVertexAttribArray(uint indx);
 
-        void DrawArrays(uint mode, int first, int count);
+        void DrawArrays(PrimitiveType mode, int first, int count);
 
-        void DrawElements(uint mode, int count, uint type);
+        void DrawElements(PrimitiveType mode, int count, uint type);
 
         void EnableVertexAttribArray(uint indx);
 
         void UseProgram(ShaderProgram program);
 
-        void VertexAttribPointer(uint indx, int size, uint type, byte normalized, int stride);
+        void VertexAttribPointer(uint indx, int size, GlType type, GlBoolean normalized, int stride);
 
-        void VertexAttribPointer(uint indx, int size, uint type, byte normalized, int stride, IntPtr ptr);
+        void VertexAttribPointer(uint indx, int size, GlType type, GlBoolean normalized, int stride, IntPtr ptr);
 
         void ActivateTextureUnit(TextureUnit textureUnit);
 
         void BindTexture(TextureTarget textureTarget, uint textureName);
 
-        void Enable(uint cap);
+        void Enable(Cap cap);
+
+        void Disable(Cap cap);
     }
 }

@@ -89,28 +89,17 @@
 
                 // load shaders
                 var vertexShaderFile = Path.Combine(currentDirectory, "VertexShader.txt");
-                var vertexShader = Shader.CompileFromFile(vertexShaderFile, NativeGl.GL_VERTEX_SHADER);
-
                 var fragmentShaderFile = Path.Combine(currentDirectory, "FragmentShader.txt");
-                var fragmentShader = Shader.CompileFromFile(fragmentShaderFile, NativeGl.GL_FRAGMENT_SHADER);
 
-                // attach to program
-                this.ShaderProgram = new SampleShader();
-                this.ShaderProgram.AttachShader(vertexShader);
-                this.ShaderProgram.AttachShader(fragmentShader);
-
-                // link shader program
-                if (!this.ShaderProgram.Link())
-                {
-                    var errorMessage = this.ShaderProgram.GetInfoLog();
-                    this.ShaderProgram.Dispose();
-
-                    throw new InvalidOperationException(string.Format("Failed to link program.\n {0}", errorMessage));
-                }
+                this.ShaderProgram = new ShaderProgramFactory<SampleShader>()
+                                                .Shader(() => new ShaderFactory(ShaderType.GL_VERTEX_SHADER).Source(vertexShaderFile).Compile())
+                                                .Shader(() => new ShaderFactory(ShaderType.GL_FRAGMENT_SHADER).Source(fragmentShaderFile).Compile()
+                                   ).Link();
 
                 // create buffers to contain our quad
-                this.VertexBuffer = this.GraphicsDevice.CreateBuffer(NativeGl.GL_ARRAY_BUFFER);
-                this.IndiceBuffer = this.GraphicsDevice.CreateBuffer(NativeGl.GL_ELEMENT_ARRAY_BUFFER);
+                var bufferFactory = new BufferFactory();
+                this.VertexBuffer = bufferFactory.CreateBuffer(BufferTarget.GL_ARRAY_BUFFER);
+                this.IndiceBuffer = bufferFactory.CreateBuffer(BufferTarget.GL_ELEMENT_ARRAY_BUFFER);
 
                 Vertex[] box = new[]
                                    {
@@ -135,7 +124,7 @@
 
                 // upload data to the buffers
                 this.GraphicsDevice.BindBuffer(this.VertexBuffer);
-                this.VertexBuffer.BufferData(box.Length * Marshal.SizeOf(typeof(Vertex)), box, NativeGl.GL_STATIC_DRAW);
+                this.VertexBuffer.BufferData(box.Length * Marshal.SizeOf(typeof(Vertex)), box, BufferUsage.GL_STATIC_DRAW);
 
                 //uint[] indices = new uint[]
                 //                     {
@@ -152,15 +141,15 @@
                 this.GraphicsDevice.VertexAttribPointer(
                         this.ShaderProgram.Vertex.Location,
                         3,
-                        NativeGl.GL_FLOAT,
-                        NativeGl.GL_FALSE,
+                        GlType.GL_FLOAT,
+                        GlBoolean.GL_FALSE,
                         Marshal.SizeOf(typeof(Vertex)));
 
                 this.GraphicsDevice.VertexAttribPointer(
                         this.ShaderProgram.TexCoord.Location,
                         2,
-                        NativeGl.GL_FLOAT,
-                        NativeGl.GL_FALSE,
+                        GlType.GL_FLOAT,
+                        GlBoolean.GL_FALSE,
                         Marshal.SizeOf(typeof(Vertex)),
                         new IntPtr(Marshal.SizeOf(typeof(float)) * 3));
 
@@ -172,7 +161,7 @@
                 this.Camera = new Camera(new Vector3(-4, 1.5f, -4), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
 
                 this.Camera.Rotate(0, 0, 0);
-                
+
                 // projection matrix
                 var fovy = this.RenderingWindow.Width / (float)this.RenderingWindow.Height;
                 this.Projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45), fovy, 1, 100);
@@ -193,7 +182,7 @@
                 this.ShaderProgram.View.SetValue(this.Camera.View);
                 this.ShaderProgram.Projection.SetValue(this.Projection);
 
-                this.GraphicsDevice.Enable(NativeGl.GL_CULL_FACE);
+                this.GraphicsDevice.Enable(Cap.GL_CULL_FACE);
             }
             catch (Exception x)
             {
@@ -204,15 +193,15 @@
 
         protected override void OnRender(double deltaTime)
         {
-            this.GraphicsDevice.Clear(NativeGl.GL_COLOR_BUFFER_BIT | NativeGl.GL_DEPTH_BUFFER_BIT);
+            this.GraphicsDevice.Clear(ClearMask.GL_COLOR_BUFFER_BIT | ClearMask.GL_DEPTH_BUFFER_BIT);
 
             // this.GraphicsDevice.DrawElements(NativeGl.GL_TRIANGLE_STRIP, 4, NativeGl.GL_UNSIGNED_INT);
-            this.GraphicsDevice.DrawArrays(NativeGl.GL_TRIANGLE_STRIP, 0, 4);
-            this.GraphicsDevice.DrawArrays(NativeGl.GL_TRIANGLE_STRIP, 4, 4);
-            this.GraphicsDevice.DrawArrays(NativeGl.GL_TRIANGLE_STRIP, 8, 4);
-            this.GraphicsDevice.DrawArrays(NativeGl.GL_TRIANGLE_STRIP, 12, 4);
-            this.GraphicsDevice.DrawArrays(NativeGl.GL_TRIANGLE_STRIP, 16, 4);
-            this.GraphicsDevice.DrawArrays(NativeGl.GL_TRIANGLE_STRIP, 20, 4);
+            this.GraphicsDevice.DrawArrays(PrimitiveType.GL_TRIANGLE_STRIP, 0, 4);
+            this.GraphicsDevice.DrawArrays(PrimitiveType.GL_TRIANGLE_STRIP, 4, 4);
+            this.GraphicsDevice.DrawArrays(PrimitiveType.GL_TRIANGLE_STRIP, 8, 4);
+            this.GraphicsDevice.DrawArrays(PrimitiveType.GL_TRIANGLE_STRIP, 12, 4);
+            this.GraphicsDevice.DrawArrays(PrimitiveType.GL_TRIANGLE_STRIP, 16, 4);
+            this.GraphicsDevice.DrawArrays(PrimitiveType.GL_TRIANGLE_STRIP, 20, 4);
         }
 
         protected override void OnUpdate(double deltaTime)

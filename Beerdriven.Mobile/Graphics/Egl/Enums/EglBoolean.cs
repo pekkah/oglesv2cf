@@ -30,7 +30,7 @@ namespace Beerdriven.Mobile.Graphics.Egl.Enums
 {
     using Interop;
 
-    public enum Boolean : uint
+    public enum EglBoolean : uint
     {
         /// <summary>
         ///   True (1).

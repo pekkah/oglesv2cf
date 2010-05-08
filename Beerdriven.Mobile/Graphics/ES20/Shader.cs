@@ -26,11 +26,13 @@
 
 #endregion
 
+using Beerdriven.Mobile.Graphics.OpenGLESv2;
+
 namespace Beerdriven.Mobile.Graphics.ES20
 {
     using System;
-    using System.IO;
     using System.Runtime.InteropServices;
+    using Enums;
     using Interop;
     using Mobile.Interop;
     using OpenGLESv2;
@@ -39,13 +41,13 @@ namespace Beerdriven.Mobile.Graphics.ES20
     {
         private const int MaxInfologLength = 2024;
 
-        public Shader(uint type)
+        internal Shader(ShaderType type)
         {
             this.Type = type;
-            this.Create();
+            this.Initialize();
         }
 
-        public uint Type
+        public ShaderType Type
         {
             get;
             private set;
@@ -55,36 +57,6 @@ namespace Beerdriven.Mobile.Graphics.ES20
         {
             get;
             private set;
-        }
-
-        public static Shader CompileFromFile(string fileName, uint type)
-        {
-            if (!File.Exists(fileName))
-            {
-                throw new ArgumentException("File does not exist");
-            }
-
-            Shader shader = new Shader(type);
-
-            var source = string.Empty;
-
-            using (var reader = File.OpenText(fileName))
-            {
-                source = reader.ReadToEnd();
-            }
-
-            shader.ShaderSource(source);
-
-            if (!shader.Compile())
-            {
-                var infoLog = shader.GetInfoLog();
-
-                shader.Dispose();
-
-                throw new InvalidOperationException(string.Format("Failed to compile shader.\n {0}", infoLog));
-            }
-
-            return shader;
         }
 
         public bool Compile()
@@ -135,9 +107,9 @@ namespace Beerdriven.Mobile.Graphics.ES20
             base.Dispose(disposing);
         }
 
-        private void Create()
+        protected void Initialize()
         {
-            this.ShaderId = NativeGl.glCreateShader(this.Type);
+            this.ShaderId = NativeGl.glCreateShader((uint)this.Type);
         }
     }
 }
